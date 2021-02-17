@@ -5,7 +5,7 @@ const { Schema } = mongoose.Schema;
 const user_schema= new Schema({
     name: { 
         type: String, 
-        required: true
+        required: true,
     },
     email: { 
     	type:String,
@@ -33,4 +33,6 @@ const user_schema= new Schema({
     }
 })
 
-module.exports = mongoose.model('user',user_schema);
+user_schema.index({email: 1, name: 1} , {unique: true})
+
+module.exports = mongoose.model('User',user_schema);

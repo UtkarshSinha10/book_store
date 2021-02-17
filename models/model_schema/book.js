@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose.Schema;
 
 const book_schema=new Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+    
     name: {
         type: String, 
-        required: true
+        required: true,
     },
     price: {
         type: Number, 
@@ -39,6 +39,8 @@ const book_schema=new Schema({
         type: Number,
         default: 1
     }
-})
+});
 
-module.exports = mongoose.model('book',book_schema);
+book_schema.index({name: 1}, {unique: true});
+
+module.exports = mongoose.model('Book',book_schema);

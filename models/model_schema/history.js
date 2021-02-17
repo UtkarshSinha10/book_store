@@ -32,4 +32,6 @@ const history_schema= new Schema({
     // } //will be addded when a book return is made
 })
 
+history_schema.index({user_id: 1, book_id: 1});
+
 module.exports = mongoose.model('history',history_schema);
