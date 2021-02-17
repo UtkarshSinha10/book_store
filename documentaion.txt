@@ -1,0 +1,1000 @@
+
+JWT have user_name and user_is_admin in payload.
+JWT secret key in environmental variables file.
+Token will be expired after 30 minutes.
+General Steps-
+1. Verification of JsonWebToken
+2. Validations of request body paramerters
+3. For each API, response body with data and message and error code in headers.
+---------------------------------------------------------------
+
+1. Login
+API - localhost:3000/user/login
+Method - POST
+
+Request Body - 
+{
+	user_email,
+	user_password
+}
+
+Validations - login_schema
+1. Validating user_email for emails.
+2. Validating user_password for atleast one uppercase, one lowercase, one special character and length of password greater than 6.
+
+User.find({user_name}) in Users database.
+
+Response Body-
+status_code:200,
+{	
+	data:"jwttoken:jwt.sign({user},environmentvariablekey)",
+	message:"you are logged in"
+}
+
+Body if user not found.
+error_code:404,
+{
+	data:null,
+	message:"User not found"
+}
+
+---------------------------------------------------------------
+
+2. Registration
+API - localhost:3000/user/register
+Method - POST
+
+Request Body -
+{
+	user_name,
+	user_email,
+	user_password,
+	user_is_admin,
+	user_dob,
+	user_age
+}
+
+Validations - registration_schema
+1. Validating user_name for only english alphabets with its lenght in range of 2 to 20
+2. Validating user_password for atleast one uppercase, one lowercase, one special character and length of password greater than 6.
+3. Validating user_email for minimum length 4, no special characters, must have '@' , domain name without special characters and domain extension only .com or .net.
+
+Search if the user already exits or not.
+Create new document in User collection using insertOne() method.
+
+Response Body -
+status_code:200,
+{	
+	data:"jwttoken:jwt.sign({user},environmentvariablekey)",
+	message:"you are registered"
+}
+
+Error Body -
+error_code:409,
+{
+	data:null,
+	message:"User already exists"
+}
+
+
+---------------------------------------------------------------
+
+
+3. Creating new book documents
+API - localhost:3000/book/new
+Method - POST
+
+Request Body -
+{
+	jwttoken,
+	book_name,
+	book_price,
+	booK_published_date,
+	book_pages,
+	book_author,
+	book_genre,
+	book_age_approprriation,
+	book_copies
+}
+
+Token Verification -
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validations- new_book_schema
+1. Validating book_copies, book_pages, book_age_appropriation and book_price for numbers only.
+2. Validating book_author, book_genre for strings only.
+3. Validating book_published_date for date only.
+
+
+if verified->
+
+if user_is_admin (from jwt payload) is true-
+
+Use insertOne on Book colleciton
+
+Response Body -
+status_code:200,
+{
+	data:detail of few feild of books added,
+	message:"Books added"
+}
+
+else ->
+
+Body if book already exist in book store.
+error_code:409,
+{
+	data:null,
+	message:"Book already exist in store"
+}
+Body if user_is_admin is false.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+---------------------------------------------------------------
+
+
+4. Updating book copies
+API - localhost:3000/book/updatecopies
+Method - POST
+
+Request Body -
+{
+	jwttoken,
+	book_name,
+	book_copies,
+	book_author
+}
+
+
+Token Verification -
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validdations - copies_update_schema
+1. Validating book_copies for numbers only.
+2. Validating book_authorfor strings only.
+
+
+if verified ->
+
+if user_is_admin (from jwt payload) is true-
+Use findOneAndUpdate({book_name,book_author},{copies:req.body.book_copies)
+
+Response Body -
+status_code:200,
+{
+	data:few details of updated book fields,
+	message:"Number of copies updated"
+}
+
+else ->
+
+Body if book not found in database.
+error_code:404,
+{
+	data:null,
+	message:"Book not found"
+}
+Body if user_is_admin is false.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+-----------------------------------------------------------------------------
+
+
+5. Get total cost spent by the particular user in last 100 days
+
+API - localhost:3000/history/amountspent
+Method - GET
+
+Request Body -
+{
+	jwttoken,
+	user_name,
+	user_email
+}
+
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validation-user schema
+1. Validating user_name for only english alphabets with its lenght in range of 2 to 20
+2. Validating user_email for minimum length 4, no special characters, must have '@' , domain name without special characters and domain extension only .com or .net.
+
+
+if verified ->
+
+if (user_is_admin is true) OR (user_is_admin is false and user_name in request body == user_name in jwt token)-
+Finding the user_id from User collection 
+Use aggregate sum for the cost field in history collection where user_id matches and (Date.now()-rented date)/(60*60*24)<=100
+
+
+Response Body -
+status_code:200,
+{	
+	data: object with aggregate sum,
+	message:"Amount data recieved successful"
+}
+
+else -
+Body if user_name not found.
+error_code:404,
+{
+	data:null,
+	message:"User not found"
+}
+Body if the user making request for other user's information.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+
+---------------------------------------------------------------------------------
+
+6. Total rented book by particular user
+API- localhost:3000/history/rentedbooks
+Mehtod- GET
+
+Request Body -
+{
+	jwttoken,
+	user_name,
+	user_email
+}
+
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validation- user schema
+1. Validating user_name for only english alphabets with its lenght in range of 2 to 20
+2. Validating user_email for minimum length 4, no special characters, must have '@' , domain name without special characters and domain extension only .com or .net.
+
+if verified ->
+
+if (user_is_admin is true) OR (user_is_admin is false and user_name in request body == user_name in jwt token)-
+Get user id using from user collection based on email and name.
+Find all the books information from history using user id.
+
+Response Body-
+status_code:200,
+{
+	data:all the history of rented book as array of book objects,
+	message: "Rented book information delivered"
+}
+
+else-
+
+Body if user_name not found.
+error_code:404,
+{
+	data:null,
+	message:"User not found"
+}
+Body if the user is not admin and making request for other user's information.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+
+---------------------------------------------------------------------------------------
+
+7. Get total books in the store
+API- localhost:3000/book/presentbooks
+Method- GET
+
+Request Body-
+{
+	jwttoken
+}
+
+Token Verification-
+jwt.verify(request.body.token, secret key i.e. environment variable key)
+
+if verified->
+
+Count the document in book collection using aggregate method.
+Count the total rented book in history collection using aggregate methods.
+Take the difference.
+
+Response Body-
+status_code:200,
+{
+	data: Difference,
+	message:"Books in store at present"
+}
+
+else
+
+Body if jwt not verified.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+--------------------------------------------------------------------------------
+
+8. Get books of given genre
+API- localhost:3000/book/genre
+Method- GET
+
+Request Body-
+{	
+	jwttoken,
+	genre
+}
+
+Token Verification-book_genre_schema
+jwt.verify(request.body.token, secret key i.e. environment variable key)
+
+if verified->
+
+Use find({genre}) on book genre field in book collecion
+
+Response Body -
+status_code:200,
+{
+	data: found books' field(like name, price, age_appropriation),
+	message: "All the books for particular genre"
+}
+
+else-
+
+Body if jwt not verified.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+---------------------------------------------------------------------------
+
+9. Rent a book
+API- localhost:3000/history/rentbook
+Method- POST
+
+Request Body-
+{
+	jwttoken,
+	book_name
+}
+
+Token Verification-
+jwt.verify(request.body.token, secret key i.e. environment variable key)
+
+if verified->
+
+
+1.Check total no. of books currently rented to this user.
+if less than 10 books->
+	Seach for the book in book collecitons.
+	Now search in history collection for available books
+	If available and same copy of book issued earlier-> 
+		Reject the rent request with message
+		Response body-
+		status_code:200,
+		{
+			data:null,
+			message:"No more copies available"
+		}
+
+
+
+	Else If available and no same copy of book issued earlier-> 
+		Insert the document in history collection
+		Response Body-
+		status_code:200,
+		{
+			data: Book object with some of its field and issued date and max date of submission and cost,
+			message:"Book issued"
+
+		}
+
+If greater than equal to 10->
+		Response Body-
+		error_code:400,
+		{
+			data:null,
+			message:"Issued book limit reached"
+		}
+
+If not verified->
+Body if jwt not verified.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+---------------------------------------------------------------------------
+
+10. Rent more books**********************************************************
+API- localhost:3000/rentbooks
+Method- POST
+
+
+Request Body-
+{
+	jwttoken,
+	book_name:[
+				{book1 field},
+				{book2 field},
+				.
+				.
+				.
+				]
+}
+
+Token Verification->
+jwt.verify(request.body.token, secret key i.e. environment variable key)
+
+if verified->
+
+First perform search that which books are available to issue, then user insertMany to insert all the books in history and renting the books.(some checks are same as in API 9)
+
+Response Body-
+status_code:200,
+{
+	data:object of only those books which are successfully issued,
+	message:"Books in stock issued"
+}
+
+If not verified->
+
+Body if jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+
+-----------------------------------------------------------------------------------------
+
+11. Total rented books
+API- localhost:3000/history/rentedbooks
+Mehtod- GET
+
+Request Body -
+{
+	jwttoken,
+}
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+if verified ->
+
+Use aggregate sum to find all the books from history that are rented.
+
+Response Body-
+status_code:200,
+{
+	data: total number of books that are rented,
+	message: "Rented book information delivered"
+}
+
+if not verified->
+
+Body if jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+
+-----------------------------------------------------------------------
+
+12. Get all books from given author
+API- localhost:3000/book/author
+Method- GET
+
+Request Body -
+{
+	jwttoken,
+	book_author
+}
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+if verified ->
+
+Validation
+1. Validating book_author, book_genre for strings only.
+
+Search the books collection using find({author:}) method.
+
+Response Body-
+status_code:200,
+{
+	data:count of books of given author,
+	message:"Total count retrieved successfully"
+}
+
+Body if jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validations failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+
+-----------------------------------------------------------------------
+
+13. Update the price of a book
+API - localhost:3000/updateprice
+Method - POST
+
+Request Body -
+{
+	jwttoken,
+	book_name,
+	book_price,
+	book_author
+}
+
+
+
+Token Verification
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+
+if verified ->
+
+Validations- price_update_schema
+1. Validating book_price for numbers only.
+2. Validating book_author for strings only.
+
+if user_is_admin (from jwt) is true
+Use findOneAndUpdate({book_name,book_author},{price:req.body.book_price)
+
+Response Body -
+status_code:200,
+{
+	data:few details of updated book fields,
+	message:"Book's price updated"
+}
+
+else ->
+
+Body if book not found.
+error_code:404,
+{
+	data:null,
+	message:"Book not found"
+}
+Body if user is not admin.
+error_code:403,
+{	
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+
+-------------------------------------------------------------------------
+
+14. Update genre of the book
+API - localhost:3000/updatebookgenre
+Method - POST
+
+Request Body -
+{
+	jwttoken,
+	book_name,
+	book_genre,
+	book_author
+}
+
+Token Verifaication-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validdations- genre_update_schema
+1. Validating book_author, book_genre for strings only.
+
+if verified ->
+
+Use findOneAndUpdate({book_name,book_author},{copies:req.body.book_genre)
+
+Response Body -
+status_code:200,
+{
+	data:few details of updated book fields,
+	message:"Book's genre updated"
+}
+
+else ->
+
+Body if book not found.
+error_code:404,
+{
+	data:null,
+	message:"Book not found"
+}
+Body if user_is_admin is false or jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+
+----------------------------------------------------------------------------
+
+15. Remove a book from book store
+API- localhost:3000/book/remove
+Method- DELETE
+
+Request Body -
+{
+	jwttoken,
+	book_name,
+	book_author
+}
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+if verified ->
+
+Validdations- book_name_author_schema
+1. Validating book_author for strings only.
+
+books.findAndDeleteOne($and:[name:request.body.book_name,author:request.body.book_author])
+
+if(successful deletion)
+Response Body-
+status_code:200,
+{
+	data:book field which is deleted,
+	message:"Book deleted"
+}
+
+if(no such book found)
+error_code:404,
+{
+	data:null,
+	message:"Book not found"
+}
+Other error response-
+Body if user_is_admin is false or jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+----------------------------------------------------------------------
+
+16. Remove books from the book store***************************************************
+API- localhost:3000/removebooks
+Method- DELETE
+
+Request Body -
+{
+	jwttoken,
+	book:[
+		{book_name1,book_author1},
+		{book_name2,book_author2},
+		...
+		],
+	
+}
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+if verified->
+
+Validdation
+1. Validating book_author for strings only.
+
+Use mongoose.deleteMany() to perform removal of books
+
+Response Body-
+status_code:200,
+{
+	data:all the deleted book names,
+	message:"Books removed"
+}
+
+Body if user_is_admin is false or jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+-----------------------------------------------------------------------
+
+17. Get the number of days after which if a book is rented, it can be rented by another customer
+API- localhost:3000/book/date
+Method- GET
+
+Request Body -
+{
+	jwttoken,
+	book_name,
+	book_author
+}
+
+Token Verification-
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validdations- book_name_author_schema
+1. Validating book_author for strings only.
+
+if verified->
+
+Find book in books collection.
+Find particular book issued in history collection.
+
+if books are available->
+Response Body-
+
+status_code:200,
+{
+	data:Preset time,
+	message:"Book is available to be rented"
+}
+if book is not available->
+Find the earliest issued book in history collection that was rented.
+Response Body-
+status_code:200,
+{
+	data: difference in maximum rented date/time and current date/time (in days),
+	message:"Book will be available soon"
+}  
+Body if book not found.
+error_code:404,
+{
+	data:null,
+	message:"Book not found"
+}
+
+if not verified->
+Body if jwt verification failed.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+
+-----------------------------------------------------------------------
+
+18. Get all the books from written by an author whose name matches a given pattern - eg: smith _lastname_
+
+API- localhost:3000/book/matchauthor
+Method- GET
+
+Request Body -
+{
+	jwttoken,
+	book_author
+}
+
+Token Verification
+jwt.verify(request.body.token,secret key i.e. environment variable key)
+
+Validdations- book_author_schema
+1. Validating book_author for strings only.
+
+if verified->
+
+Use find({author:/req.body.book_author/}) in mongoose that will return documents which will matches./partially matches
+
+Response body-
+status_code:200,
+{	
+	data: returned objects of query,
+	message:`Books whose author name partially matches with {req.body.book_author}`
+}
+
+
+if not verified->
+
+Body if jwt verification failed.
+error_code:403,
+{	
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+-----------------------------------------------------------------------------------------------
+
+19. User log out************************************************************************************
+API - localhost:3000/logout
+Method- GET
+
+Request Body-
+{
+	jwttoken
+}
+
+Token Verification-
+jwt.verify(request.body.token, secret key i.e. environment variable key)
+
+if verified->
+
+Put them in Array so that after logout if the same user again try to send request to APIs using the previous generated token (that was not expired yet), will be discareded based on its presence in the array.
+
+else-
+
+Body if jwt is present in logged_out_jwt or jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+controller will ask for servie to get interact with data/databse
+controller will only provide flow business 
+contorller 
+user,book, issuebook
+business logic 
+all in the services.
+modal schema and queries all in modals 
