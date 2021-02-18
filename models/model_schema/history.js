@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose.Schema;
 
-const history_schema= new Schema({
+const history_schema= mongoose.Schema({
 
     user_id: { 
         type: mongoose.Schema.Types.ObjectId,
@@ -34,4 +34,4 @@ const history_schema= new Schema({
 
 history_schema.index({user_id: 1, book_id: 1});
 
-module.exports = mongoose.model('history',history_schema);
+module.exports = mongoose.model('History',history_schema);

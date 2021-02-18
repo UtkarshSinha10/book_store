@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose.Schema;
 
-const book_schema=new Schema({
+const book_schema = mongoose.Schema({
     
     name: {
         type: String, 
@@ -42,5 +42,6 @@ const book_schema=new Schema({
 });
 
 book_schema.index({name: 1}, {unique: true});
+
 
 module.exports = mongoose.model('Book',book_schema);
