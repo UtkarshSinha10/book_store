@@ -28,7 +28,7 @@ Response Body-
 status_code:200,
 {	
 	data:"jwt token:jwt.sign({user},environment variable key)",
-	message:"you are logged in"
+	message:"Logged in"
 }
 
 Body if user not found.
@@ -314,7 +314,7 @@ error_code:440,
 ---------------------------------------------------------------------------------------
 
 7. Get total books in the store
-API- localhost:3000/book/presents books
+API- localhost:3000/book/presentbooks
 Method- GET
 
 Request Body-
@@ -614,7 +614,7 @@ error_code:422,
 -----------------------------------------------------------------------
 
 13. Update the price of a book
-API - localhost:3000/updateprice
+API - localhost:3000/book/updateprice
 Method - POST
 
 Request Body -
@@ -678,7 +678,7 @@ error_code:422,
 -------------------------------------------------------------------------
 
 14. Update genre of the book
-API - localhost:3000/updatebookgenre
+API - localhost:3000/book/updategenre
 Method - POST
 
 Request Body -
@@ -963,32 +963,3 @@ error_code:422,
 	data:null,
 	message:"Validation error"
 }
-
------------------------------------------------------------------------------------------------
-
-19. User log out************************************************************************************
-API - localhost:3000/logout
-Method- GET
-
-Request Body-
-{
-	jwt token
-}
-
-Token Verification-
-jwt.verify(request.body.token, secret key i.e. environment variable key)
-
-if verified->
-
-Put them in Array so that after logout if the same user again tries to send a request to APIs using the previous generated token (that was not expired yet), will be discarded based on its presence in the array.
-
-else-
-
-Body if jwt is present in logged_out_jwt or jwt expired.
-error_code:440,
-{
-	data:null,
-	message:"Session expired, please login again"
-}
-
-

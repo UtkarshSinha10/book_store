@@ -31,7 +31,7 @@ const book_schema = mongoose.Schema({
         type:Number, 
         required: true
     },
-    is_discared: {
+    is_discarded: {
         type: Boolean,
         default: false
     },

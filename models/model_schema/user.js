@@ -29,7 +29,8 @@ const user_schema=  mongoose.Schema({
     },
     is_active: {
         type: Boolean,
-        default: true
+        default: true,
+        require: true
     }
 })
 

@@ -1,83 +1,87 @@
+const { date } = require('joi');
 const Joi = require('joi');
 
 const login_schema = Joi.object().keys({
     
-    user_email: Joi.string().email().required(),
-    user_password: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).min(6).required()
+    email: Joi.string().email().required(),
+    password: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).min(6).required()
 
 });
 
 const registration_schema = Joi.object().keys({
 
-    user_name: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required(),
-    user_email: Joi.string().email().required(),
-    user_password: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).min(6).required(),
-    user_is_admin: Joi.boolean().optional(),
-    user_dob: Joi.date().required(),
-    user_age: Joi.number().min(12).max(150).required()
-
+    name: Joi.string().min(3).max(30).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    is_admin: Joi.boolean().required(),
+    dob: Joi.date().required(),
+    age: Joi.number().min(12).max(150).required(), 
+    is_active: Joi.boolean().required()
+    // .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])$/)
+    // regex(/^[a-zA-Z]$/).
 });
 
 const new_book_schema = Joi.object().keys({
 
-    book_name: Joi.string().required(),
-    book_price: Joi.number().required(),
-	booK_published_date: Joi.date().required(),
-	book_pages: Joi.number().min(1).required(),
-	book_author: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required(),
-	book_genre: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required(),
-	book_age_approprriation: Joi.number().min(12).required(),
-	book_copies: Joi.number().min(1).required()
+    name: Joi.string().required(),
+    price: Joi.number().required(),
+	published: Joi.date().required(),
+	pages: Joi.number().min(1).required(),
+	author: Joi.string().min(3).max(30).required(),
+	genre: Joi.string().min(3).max(30).required(),
+	age_appropriation: Joi.number().min(12).required(),
+	copies: Joi.number().min(1).required(),
+    is_discarded: Joi.boolean().required()
 
 });
 
 const copies_update_schema = Joi.object().keys({
 
-    book_name: Joi.string().required(),
-	book_copies: Joi.number().min(1).required(),
-	book_author: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required()
+    name: Joi.string().required(),
+	copies: Joi.number().min(1).required(),
+	author: Joi.string().min(3).max(30).required()
 
 });
 
 const user_schema = Joi.object().keys({
 
-    user_name: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required(),
-    user_email: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).required()
+    name: Joi.string().min(3).max(30).required(),
+    email: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).required()
 
 });
 
 const book_genre_schema = Joi.object().keys({
 
-    book_genre: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required()
+    genre: Joi.string().min(3).max(30).required()
 
 });
 
 const book_author_schema = Joi.object().keys({
 
-    book_author: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required()
+    author: Joi.string().min(3).max(30).required()
 
 });
 
 const price_update_schema = Joi.object().keys({
 
-    book_name: Joi.string().required(),
-	book_price: Joi.number().required(),
-	book_author: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required(),
+    name: Joi.string().required(),
+	price: Joi.number().required(),
+	author: Joi.string().min(3).max(30).required(),
 	
 });
 
 const genre_update_schema = Joi.object().keys({
 
-    book_name: Joi.string().required(),
-	book_genre: Joi.string().regex(/^[a-zA-Z]$/).required(),
-	book_author: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required()
+    name: Joi.string().required(),
+	genre: Joi.string().required(),
+	author: Joi.string().min(3).max(30).required()
 
 });
 
 const book_name_author_schema = Joi.object().keys({
 
-    book_name: Joi.string().required(),
-	book_author: Joi.string().regex(/^[a-zA-Z]$/).min(3).max(30).required()
+    name: Joi.string().required(),
+	author: Joi.string().min(3).max(30).required()
 
 });
 

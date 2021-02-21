@@ -5,11 +5,11 @@ const history_schema= mongoose.Schema({
 
     user_id: { 
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "user"
     },
     book_id: { 
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
+        ref: "book"
     },
     book_price: { 
         type: Number, 
@@ -25,7 +25,7 @@ const history_schema= mongoose.Schema({
     },
     max_date_to_return: {
         type: Date,
-        default: Date.now()+(14*24*60*60)
+            default:  function(){return +new Date() + 2*7*24*60*60*1000}
     }
     // return_date: {
     // 	type: Date
