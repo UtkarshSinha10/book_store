@@ -236,7 +236,7 @@ Method - POST
 JWT token in headers.
 Request Body -
 {
-name,
+	name,
 	price,
 	published,
 	pages,
@@ -293,7 +293,7 @@ error_code:440,
 
 4. Updating book
 API - localhost:3000/book/update
-Method - POST
+Method - PUT
 
 JWT token in headers.
 Request Body -

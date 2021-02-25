@@ -10,7 +10,9 @@ exports.new_book = async (req, res) => {
     const user_is_admin = payload.user_is_admin;
 
     if (user_is_admin) {
-      const found_book = await book_query.find_a_book_by_name(req.body);
+      const new_book = req.body;
+      new_book.is_discarded=false;
+      const found_book = await book_query.find_a_book_by_name(new_book.name);
 
       if (found_book) {
         return res.status(409).json({
@@ -18,15 +20,16 @@ exports.new_book = async (req, res) => {
           message: 'Book already exist',
         });
       }
-      const new_book = await book_query.create_new_book(req.body);
-      if (!new_book) {
+      const book = await book_query.create_new_book(new_book);
+      console.log(book);
+      if (!book) {
         return res.status(400).json({
           data: null,
           message: 'Error while adding new book',
         });
       }
       return res.status(200).json({
-        data: null,
+        data: book.ops[0],
         message: 'Done',
       });
     } else {
@@ -38,35 +41,45 @@ exports.new_book = async (req, res) => {
   } catch (err) {
     return res.status(400).json({
       data: null,
-      message: 'Error while adding new book',
+      message: 'Error while adding a new book',
     });
   }
 };
 
-exports.update_copies =async (req, res) =>{
+exports.update_book = async (req, res) =>{
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
     const user_is_admin = payload.user_is_admin;
 
     if (user_is_admin) {
-      const found_book = await book_query.find_a_book_by_name(req.body);
+      const found_book = await book_query.find_a_book_by_id(req.body.book_id);
       if (!found_book) {
         return res.status(404).json({
           data: null,
           message: 'Book not found',
         });
       } else {
-        const update_copies = await book_query.update_copies_of_a_book(req.body);
-        if (!update_copies) {
+        const new_book = {};
+        if (req.body.copies) {
+          new_book.copies = req.body.copies;
+        }
+        if (req.body.genre) {
+          new_book.genre = req.body.genre;
+        }
+        if (req.body.price) {
+          new_book.price = Number(req.body.price);
+        }
+        const update_book = await book_query.update_book(req.body.book_id, new_book);
+        if (!update_book) {
           return res.status().json({
             data: null,
             message: 'Updation failed',
           });
         }
         return res.status(200).json({
-          data: update_copies,
-          message: 'Copies successfully updated',
+          data: update_book,
+          message: 'Updation successful',
         });
       }
     } else {
@@ -82,6 +95,7 @@ exports.update_copies =async (req, res) =>{
     });
   }
 };
+
 
 exports.present_books = async (req, res) =>{
   try {
@@ -146,86 +160,6 @@ exports.books_by_author = async (req, res) =>{
     return res.status(400).json({
       data: null,
       message: 'Error while searching books by author',
-    });
-  }
-};
-
-exports.update_price =async (req, res) =>{
-  try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
-    const user_is_admin = payload.user_is_admin;
-
-    if (user_is_admin) {
-      const found_book = await book_query.find_a_book_by_name(req.body);
-      if (!found_book) {
-        return res.status(404).json({
-          data: null,
-          message: 'Book not found',
-        });
-      } else {
-        const update_price = await book_query.update_price_of_book(req.body);
-        if (!update_price) {
-          return res.status().json({
-            data: null,
-            message: 'Updation failed',
-          });
-        }
-        return res.status(200).json({
-          data: update_price,
-          message: 'Price successfully updated',
-        });
-      }
-    } else {
-      return res.status(403).json({
-        data: null,
-        message: 'Forbidden: Access is denied',
-      });
-    }
-  } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while updating price of book',
-    });
-  }
-};
-
-exports.update_genre =async (req, res) =>{
-  try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
-    const user_is_admin = payload.user_is_admin;
-
-    if (user_is_admin) {
-      const found_book = await book_query.find_a_book_by_name(req.body);
-      if (!found_book) {
-        return res.status(404).json({
-          data: null,
-          message: 'Book not found',
-        });
-      } else {
-        const update_genre = await book_query.update_genre_of_book(req.body);
-        if (!update_genre) {
-          return res.status().json({
-            data: null,
-            message: 'Updation failed',
-          });
-        }
-        return res.status(200).json({
-          data: update_genre,
-          message: 'Genre successfully updated',
-        });
-      }
-    } else {
-      return res.status(403).json({
-        data: null,
-        message: 'Forbidden: Access is denied',
-      });
-    }
-  } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while updating genre of book',
     });
   }
 };

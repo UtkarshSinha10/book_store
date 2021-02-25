@@ -9,17 +9,13 @@ const routes = express.Router();
 
 routes.post('/new', authorize.authorization, validator.new_book_validator, book_controller.new_book);
 
-routes.post('/updatecopies', authorize.authorization, validator.copies_update_validator, book_controller.update_copies);
+routes.post('/update', authorize.authorization, validator.book_update_validator, book_controller.update_book);
 
 routes.get('/presentbooks', authorize.authorization, book_controller.present_books);
 
 routes.get('/genre', authorize.authorization, validator.genre_validator, book_controller.book_by_genre);
 
 routes.get('/author', authorize.authorization, validator.author_validator, book_controller.book_by_author);
-
-routes.post('/updateprice', authorize.authorization, validator.price_update_validator, book_controller.update_price);
-
-routes.post('/updategenre', authorize.authorization, validator.genre_update_validator, book_controller.update_genre);
 
 routes.post('/remove', authorize.authorization, validator.book_name_author_validator, book_controller.remove_book);
 

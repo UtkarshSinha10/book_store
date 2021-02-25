@@ -31,17 +31,17 @@ exports.new_book_schema = Joi.object().keys({
   pages: Joi.number().min(1).required(),
   author: Joi.string().min(3).max(30).required(),
   genre: Joi.string().min(3).max(30).required(),
-  age_appropriation: Joi.number().min(12).required(),
+  age_rated: Joi.number().min(12).required(),
   copies: Joi.number().min(1).required(),
-  is_discarded: Joi.boolean().required(),
 
 });
 
-exports.copies_update_schema = Joi.object().keys({
+exports.book_update_schema = Joi.object().keys({
 
-  name: Joi.string().required(),
-  copies: Joi.number().min(1).required(),
-  author: Joi.string().min(3).max(30).required(),
+  book_id: Joi.string().required(),
+  copies: Joi.number().optional(),
+  genre: Joi.string().optional(),
+  price: Joi.number().optional(),
 
 });
 
@@ -60,22 +60,6 @@ exports.book_genre_schema = Joi.object().keys({
 
 exports.book_author_schema = Joi.object().keys({
 
-  author: Joi.string().min(3).max(30).required(),
-
-});
-
-exports.price_update_schema = Joi.object().keys({
-
-  name: Joi.string().required(),
-  price: Joi.number().required(),
-  author: Joi.string().min(3).max(30).required(),
-
-});
-
-exports.genre_update_schema = Joi.object().keys({
-
-  name: Joi.string().required(),
-  genre: Joi.string().required(),
   author: Joi.string().min(3).max(30).required(),
 
 });

@@ -16,6 +16,8 @@ mongoose.connect('mongodb://localhost:27017/assignment', {useUnifiedTopology: tr
   }
 });
 
+mongoose.set('useFindAndModify', false);
+
 const app = express();
 
 app.use(body_parser.json());

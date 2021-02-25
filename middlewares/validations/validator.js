@@ -38,8 +38,8 @@ exports.new_book_validator = (req, res, next) => {
   }
 };
 
-exports.copies_update_validator = (req, res, next) => {
-  const valid = validate_schema.copies_update_schema.validate(req.body);
+exports.book_update_validator = (req, res, next) => {
+  const valid = validate_schema.book_update_schema.validate(req.body);
   if (valid.error) {
     res.status(422).json(validation_body.invalid_body('Validation Failed'));
   } else {
@@ -74,23 +74,6 @@ exports.author_validator = (req, res, next) => {
   }
 };
 
-exports.price_update_validator = (req, res, next) => {
-  const valid = validate_schema.price_update_schema.validate(req.body);
-  if (valid.error) {
-    res.status(422).json(validation_body.invalid_body('Validation Failed'));
-  } else {
-    next();
-  }
-};
-
-exports.genre_update_validator = (req, res, next) => {
-  const valid = validate_schema.genre_update_schema.validate(req.body);
-  if (valid.error) {
-    res.status(422).json(validation_body.invalid_body('Validation Failed'));
-  } else {
-    next();
-  }
-};
 
 exports.book_name_author_validator = (req, res, next) => {
   const valid = validate_schema.book_name_author_schema.validate(req.body);

@@ -13,7 +13,7 @@ const book_schema = new mongoose.Schema({
   },
   publised: {
     type: Date,
-    default: Date.now(),
+    required: true,
   },
   pages: {
     type: Number,

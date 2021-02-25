@@ -4,8 +4,8 @@ exports.new_book = (req, res, next) => {
   book_service.new_book(req, res);
 };
 
-exports.update_copies = (req, res, next) => {
-  book_service.update_copies(req, res);
+exports.update_book = (req, res, next) => {
+  book_service.update_book(req, res);
 };
 
 exports.present_books = (req, res, next) => {
@@ -18,14 +18,6 @@ exports.book_by_genre = (req, res, next) => {
 
 exports.book_by_author = (req, res, next) => {
   book_service.books_by_author(req, res);
-};
-
-exports.update_price = (req, res, next) => {
-  book_service.update_price(req, res);
-};
-
-exports.update_genre = (req, res, next) => {
-  book_service.update_genre(req, res);
 };
 
 exports.remove_book = (req, res, next) => {
