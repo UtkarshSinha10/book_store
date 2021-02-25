@@ -897,7 +897,7 @@ error_code:422,
 
 16. Creating new admin
 API - localhost:3000/user/newadmin
-Method - POST
+Method - PUT
 
 JWT token in headers.
 Request Body -

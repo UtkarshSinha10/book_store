@@ -42,7 +42,7 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const user = await user_query.find_user(req.body);
+    const user = await user_query.find_user(req.body.email);
     if (user) {
       return res.status(409).json({
         data: null,
@@ -60,6 +60,8 @@ exports.register = async (req, res) => {
       } else {
         const new_user = req.body;
         new_user.password = hash_password;
+        new_user.is_admin = false;
+        new_user.is_active = true;
         const registered = await user_query.register_user(new_user);
 
         const token = jwt.sign({
@@ -84,6 +86,32 @@ exports.register = async (req, res) => {
     return res.status(500).json({
       data: null,
       message: 'Not able to register',
+    });
+  }
+};
+
+exports.new_admin = async ( req, res ) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const payload = jwt.verify(token, process.env.mysecretkey);
+  const user_is_admin = payload.user_is_admin;
+
+  if ( user_is_admin ) {
+    const admin = await user_query.update_is_admin(req.body.email);
+    if (admin) {
+      return res.status(200).json({
+        data: admin,
+        message: 'Admin privileges granted',
+      });
+    } else {
+      return res.status(400).json({
+        data: null,
+        message: 'User not found',
+      });
+    }
+  } else {
+    return res.status(403).json({
+      data: null,
+      message: 'Forbidden: Access is denied',
     });
   }
 };

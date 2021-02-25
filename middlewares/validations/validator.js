@@ -20,6 +20,15 @@ exports.register_validator = (req, res, next) => {
   }
 };
 
+exports.new_admin_validator = (req, res, next)=>{
+  const valid = validate_schema.new_admin_schema.validate(req.body);
+  if (valid.error) {
+    res.status(422).json(validation_body.invalid_body('Validation Failed'));
+  } else {
+    next();
+  }
+};
+
 exports.new_book_validator = (req, res, next) => {
   const valid = validate_schema.new_book_schema.validate(req.body);
   if (valid.error) {

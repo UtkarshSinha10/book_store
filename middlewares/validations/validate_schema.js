@@ -17,6 +17,12 @@ exports.registration_schema = Joi.object().keys({
 
 });
 
+exports.new_admin_schema = Joi.object().keys({
+
+  email: Joi.string().email().required(),
+
+});
+
 exports.new_book_schema = Joi.object().keys({
 
   name: Joi.string().required(),

@@ -7,3 +7,7 @@ exports.login = (req, res, next)=>{
 exports.register = (req, res, next)=>{
   user_service.register(req, res);
 };
+
+exports.new_admin = (req, res, next) =>{
+  user_service.new_admin(req, res);
+};
