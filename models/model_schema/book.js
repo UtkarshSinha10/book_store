@@ -5,6 +5,7 @@ const book_schema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   price: {
     type: Number,
@@ -16,7 +17,7 @@ const book_schema = new mongoose.Schema({
   },
   pages: {
     type: Number,
-    default: 0,
+    required: true,
   },
   author: {
     type: String,
@@ -26,7 +27,7 @@ const book_schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  age_appropriation: {
+  age_rated: {
     type: Number,
     required: true,
   },
@@ -36,11 +37,11 @@ const book_schema = new mongoose.Schema({
   },
   copies: {
     type: Number,
-    default: 1,
+    required: true,
   },
 });
 
-book_schema.index({name: 1}, {unique: true});
+book_schema.index({name: 1, author: 'text', genre: 1});
 
 
-module.exports = mongoose.model('Book', book_schema);
+module.exports = mongoose.model('book', book_schema);

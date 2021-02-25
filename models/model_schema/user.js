@@ -22,17 +22,12 @@ const user_schema= new mongoose.Schema({
     type: Date,
     required: true,
   },
-  age: {
-    type: Number,
-    required: true,
-  },
   is_active: {
     type: Boolean,
     default: true,
-    require: true,
   },
 });
 
-user_schema.index({email: 1, name: 1}, {unique: true});
+user_schema.index({email: 1, name: 1, is_admin: 1}, {unique: true});
 
-module.exports = mongoose.model('User', user_schema);
+module.exports = mongoose.model('user', user_schema);

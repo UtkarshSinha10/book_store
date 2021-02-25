@@ -14,7 +14,7 @@ const history_schema= new mongoose.Schema({
     type: Number,
     required: true,
   },
-  date: {
+  rent_date: {
     type: Date,
     required: true,
   },
@@ -22,14 +22,12 @@ const history_schema= new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  max_date_to_return: {
+  returned_date: {
     type: Date,
-    default: function() {
-      return +new Date() + 2*7*24*60*60*1000;
-    },
+    default: Date.now(),
   },
 });
 
-history_schema.index({user_id: 1, book_id: 1});
+history_schema.index({user_id: 1, book_id: 1, date: -1});
 
-module.exports = mongoose.model('History', history_schema);
+module.exports = mongoose.model('history', history_schema);
