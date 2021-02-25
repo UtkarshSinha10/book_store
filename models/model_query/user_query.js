@@ -10,7 +10,6 @@ exports.find_user = async (email) => {
   }
 };
 
-
 exports.register_user = async (new_user) => {
   try {
     const register_user = await user.collection.insertOne(new_user);
@@ -19,7 +18,6 @@ exports.register_user = async (new_user) => {
     throw err;
   }
 };
-
 
 exports.update_is_admin = async (email) => {
   try {
