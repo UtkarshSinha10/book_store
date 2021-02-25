@@ -2,6 +2,9 @@ const express = require('express');
 const body_parser = require('body-parser');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const user_routes = require('./routes/user');
+const book_routes = require('./routes/book');
+const history_routes = require('./routes/history');
 
 dotenv.config();
 
@@ -12,11 +15,6 @@ mongoose.connect('mongodb://localhost:27017/assignment', {useUnifiedTopology: tr
     console.log('db connected');
   }
 });
-
-
-const user_routes = require('./routes/user');
-const book_routes = require('./routes/book');
-const history_routes = require('./routes/history');
 
 const app = express();
 

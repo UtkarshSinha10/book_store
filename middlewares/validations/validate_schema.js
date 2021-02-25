@@ -1,25 +1,23 @@
 /* eslint-disable max-len */
 const Joi = require('joi');
 
-const login_schema = Joi.object().keys({
+exports.login_schema = Joi.object().keys({
 
   email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
+  password: Joi.string().min(6).max(30).required(),
 
 });
 
-const registration_schema = Joi.object().keys({
+exports.registration_schema = Joi.object().keys({
 
   name: Joi.string().min(3).max(30).required(),
   email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  is_admin: Joi.boolean().required(),
+  password: Joi.string().min(6).max(30).required(),
   dob: Joi.date().required(),
-  age: Joi.number().min(12).max(150).required(),
-  is_active: Joi.boolean().required(),
+
 });
 
-const new_book_schema = Joi.object().keys({
+exports.new_book_schema = Joi.object().keys({
 
   name: Joi.string().required(),
   price: Joi.number().required(),
@@ -33,7 +31,7 @@ const new_book_schema = Joi.object().keys({
 
 });
 
-const copies_update_schema = Joi.object().keys({
+exports.copies_update_schema = Joi.object().keys({
 
   name: Joi.string().required(),
   copies: Joi.number().min(1).required(),
@@ -41,26 +39,26 @@ const copies_update_schema = Joi.object().keys({
 
 });
 
-const user_schema = Joi.object().keys({
+exports.user_schema = Joi.object().keys({
 
   name: Joi.string().min(3).max(30).required(),
   email: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).required(),
 
 });
 
-const book_genre_schema = Joi.object().keys({
+exports.book_genre_schema = Joi.object().keys({
 
   genre: Joi.string().min(3).max(30).required(),
 
 });
 
-const book_author_schema = Joi.object().keys({
+exports.book_author_schema = Joi.object().keys({
 
   author: Joi.string().min(3).max(30).required(),
 
 });
 
-const price_update_schema = Joi.object().keys({
+exports.price_update_schema = Joi.object().keys({
 
   name: Joi.string().required(),
   price: Joi.number().required(),
@@ -68,7 +66,7 @@ const price_update_schema = Joi.object().keys({
 
 });
 
-const genre_update_schema = Joi.object().keys({
+exports.genre_update_schema = Joi.object().keys({
 
   name: Joi.string().required(),
   genre: Joi.string().required(),
@@ -76,20 +74,9 @@ const genre_update_schema = Joi.object().keys({
 
 });
 
-const book_name_author_schema = Joi.object().keys({
+exports.book_name_author_schema = Joi.object().keys({
 
   name: Joi.string().required(),
   author: Joi.string().min(3).max(30).required(),
 
 });
-
-exports.login_schema = login_schema;
-exports.registration_schema = registration_schema;
-exports.new_book_schema = new_book_schema;
-exports.copies_update_schema = copies_update_schema;
-exports.user_schema = user_schema;
-exports.book_genre_schema = book_genre_schema;
-exports.book_author_schema = book_author_schema;
-exports.price_update_schema = price_update_schema;
-exports.genre_update_schema = genre_update_schema;
-exports.book_name_author_schema = book_name_author_schema;

@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 exports.login = async (req, res) => {
   try {
-    const user = await user_query.find_user(req.body);
+    const user = await user_query.find_user(req.body.email);
     if (!user) {
       return res.status(404).json({
         data: null,

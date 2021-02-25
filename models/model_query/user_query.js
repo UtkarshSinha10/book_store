@@ -1,8 +1,8 @@
 const User = require('../model_schema/user');
 
-exports.find_user = async (user) => {
+exports.find_user = async (email) => {
   try {
-    const found_user = await User.collection.findOne({email: user.email});
+    const found_user = await User.collection.findOne({email: email});
     return found_user;
   } catch (err) {
     throw err;
