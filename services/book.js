@@ -96,8 +96,7 @@ exports.update_book = async (req, res) =>{
   }
 };
 
-
-exports.present_books = async (req, res) =>{
+exports.current_books = async (req, res) =>{
   try {
     const book_rented = await history_query.count_rented_books();
     const total_book_in_store = await book_query.count_total_books();
@@ -121,9 +120,13 @@ exports.present_books = async (req, res) =>{
 };
 
 exports.books_by_genre = async (req, res) =>{
+  console.log('hi');
   try {
-    const book_list = await book_query.books_by_genre(req.body.genre);
-    if (book_list.length>0) {
+    const genre = req.query.genre;
+    const limit = Number(req.query.limit);
+    console.log(genre);
+    const book_list = await book_query.books_by_genre(genre, limit);
+    if (book_list) {
       return res.status(200).json({
         data: book_list,
         message: 'Search by genre successful',

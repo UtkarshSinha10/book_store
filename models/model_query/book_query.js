@@ -54,9 +54,9 @@ exports.count_total_books = async () => {
   }
 };
 
-exports.books_by_genre = async (genre) => {
+exports.books_by_genre = async (genre, limit) => {
   try {
-    const books_by_genre = await Book.find({genre: genre});
+    const books_by_genre = await Book.find({genre: genre}).select('id name price published author').limit(limit);
     return books_by_genre;
   } catch (err) {
     throw err;

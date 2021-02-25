@@ -515,7 +515,7 @@ error_code:422,
 --------------------------------------------------------------------------------
 
 8. Get count of books of given genre
-API- localhost:3000/book/genre/:genre
+API- localhost:3000/book/genre/?genre=****&limit=***
 Method- GET
 
 JWT token in headers.

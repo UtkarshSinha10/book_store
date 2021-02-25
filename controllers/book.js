@@ -8,8 +8,8 @@ exports.update_book = (req, res, next) => {
   book_service.update_book(req, res);
 };
 
-exports.present_books = (req, res, next) => {
-  book_service.present_books(req, res);
+exports.current_books = (req, res, next) => {
+  book_service.current_books(req, res);
 };
 
 exports.book_by_genre = (req, res, next) => {
