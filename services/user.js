@@ -90,28 +90,60 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.new_admin = async ( req, res ) => {
-  const token = req.headers.authorization.split(' ')[1];
-  const payload = jwt.verify(token, process.env.mysecretkey);
-  const user_is_admin = payload.user_is_admin;
+exports.new_admin = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const payload = jwt.verify(token, process.env.mysecretkey);
+    const user_is_admin = payload.user_is_admin;
 
-  if ( user_is_admin ) {
-    const admin = await user_query.update_is_admin(req.body.email);
-    if (admin) {
-      return res.status(200).json({
-        data: admin,
-        message: 'Admin privileges granted',
-      });
+    if ( user_is_admin ) {
+      const admin = await user_query.update_is_admin(req.body.email);
+      if (admin) {
+        return res.status(200).json({
+          data: admin,
+          message: 'Admin privileges granted',
+        });
+      } else {
+        return res.status(400).json({
+          data: null,
+          message: 'User not found',
+        });
+      }
     } else {
-      return res.status(400).json({
+      return res.status(403).json({
         data: null,
-        message: 'User not found',
+        message: 'Forbidden: Access is denied',
       });
     }
-  } else {
-    return res.status(403).json({
+  } catch (err) {
+    return res.status(500).json({
       data: null,
-      message: 'Forbidden: Access is denied',
+      message: 'Not able to provide privileges',
+    });
+  }
+};
+
+exports.get_all_users = async (req, res) => {
+  try {
+    const skip = Number(req.query.skip);
+    const limit = Number(req.query.limit);
+
+    const users = await user_query.find_all_users(skip, limit);
+    if (users) {
+      res.status(200).json({
+        data: users,
+        message: 'Registered users',
+      });
+    } else {
+      return res.status(200).json({
+        data: null,
+        message: 'No user exists',
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      data: null,
+      message: 'Not able to get users',
     });
   }
 };

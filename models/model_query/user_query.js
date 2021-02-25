@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const user = require('../model_schema/user');
 
 exports.find_user = async (email) => {
@@ -25,6 +26,15 @@ exports.update_is_admin = async (email) => {
     const admin = await user.updateOne({email: email}, {is_admin: true});
     return admin;
   } catch ( err ) {
+    throw err;
+  }
+};
+
+exports.find_all_users = async (skip, limit) => {
+  try {
+    const users = await user.find().select('name email').skip(skip).limit(limit);
+    return users;
+  } catch (err) {
     throw err;
   }
 };

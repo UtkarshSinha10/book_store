@@ -944,8 +944,8 @@ error_code:440,
 
 
 17. Get all users
-API - localhost:3000/user/all
-Method - POST
+API - localhost:3000/user/all/?skip=1&limit=50
+Method - GET
 
 JWT token in headers.
 

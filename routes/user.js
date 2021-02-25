@@ -13,4 +13,6 @@ routes.post('/register', validator.register_validator, user_controller.register)
 
 routes.put('/admin', validator.new_admin_validator, authorize.authorization, user_controller.new_admin);
 
+routes.get('/all', authorize.authorization, user_controller.get_all_users);
+
 module.exports = routes;

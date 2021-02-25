@@ -11,3 +11,7 @@ exports.register = (req, res, next)=>{
 exports.new_admin = (req, res, next) =>{
   user_service.new_admin(req, res);
 };
+
+exports.get_all_users = (req, res, next) =>{
+  user_service.get_all_users(req, res);
+};
