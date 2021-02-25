@@ -7,7 +7,7 @@ exports.authorization = ( req, res, next )=>{
   if ( verified ) {
     next();
   } else {
-    res.status(401).json({
+    return res.status(401).json({
       data: null,
       message: 'Unauthorized',
     });

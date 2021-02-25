@@ -4,7 +4,7 @@ const Joi = require('joi');
 const login_schema = Joi.object().keys({
 
   email: Joi.string().email().required(),
-  password: Joi.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/).min(6).required(),
+  password: Joi.string().min(6).required(),
 
 });
 
@@ -17,8 +17,6 @@ const registration_schema = Joi.object().keys({
   dob: Joi.date().required(),
   age: Joi.number().min(12).max(150).required(),
   is_active: Joi.boolean().required(),
-  // .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])$/)
-  // regex(/^[a-zA-Z]$/).
 });
 
 const new_book_schema = Joi.object().keys({

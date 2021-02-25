@@ -1,5 +1,7 @@
 Book Store Assignment Backend Application
 
+Github Link - UtkarshSinha10
+
 JSON WebToken-
 JWT has user_email and user_is_admin in payload.
 JWT secret key in environmental variables file.
@@ -14,9 +16,28 @@ General Steps-
 
 Folder Structures-
 Controllers
+User
+Book
+History
 Services
+User
+Book
+History
 Middlewares
+Authorization
+Validation
+Validation Schema
+Validation Body
+Validators
 Models
+Model Schema
+User
+Book
+History
+Model Query
+User
+Book
+History
 Server.js 
 
 
@@ -24,6 +45,7 @@ Database Schema-
 
 User-
 const user_schema=  mongoose.Schema({
+
     name: { 
         type: String, 
         required: true,
@@ -38,14 +60,10 @@ const user_schema=  mongoose.Schema({
     },
     is_admin: { 
         type: Boolean, 
-        required: true
+        default: false
     },
     dob: {
         type: Date, 
-        required: true
-    },
-    age: { 
-        type: Number,
         required: true
     },
     is_active: {
@@ -55,7 +73,7 @@ const user_schema=  mongoose.Schema({
     }
 })
 
-user_schema.index({email: 1, name: 1} , {unique: true})
+user_schema.index({email: 1, name:1, is_admin: 1} , {unique: true})
 
 Book-
 const book_schema = mongoose.Schema({
@@ -70,11 +88,11 @@ const book_schema = mongoose.Schema({
     },
     published: {
         type: Date, 
-        default: Date.now()
+        required: true
     },
     pages: {
         type: Number,
-        default: 0
+        required: true
     },
     author: {
         type: String, 
@@ -84,7 +102,7 @@ const book_schema = mongoose.Schema({
         type: String, 
         required: true
     },
-    age_appropriation: {
+    age_rated: {
         type:Number, 
         required: true
     },
@@ -94,41 +112,42 @@ const book_schema = mongoose.Schema({
     },
     copies: {
         type: Number,
-        default: 1
+        required: true
     }
 });
-book_schema.index({name: 1}, {unique: true});
+
+book_schema.index({name: 1, author: ‘text’, genre: 1}, {unique: true});
 
 History-
 const history_schema= mongoose.Schema({
 
     user_id: { 
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "users"
     },
     book_id: { 
         type: mongoose.Schema.Types.ObjectId,
-        ref: "book"
+        ref: "books"
     },
     book_price: { 
         type: Number, 
         required: true
     },
-    date: { 
+    rent_date: { 
         type: Date, 
         required: true
     },
     is_returned: { 
         type: Boolean, 
         default: false
-    },
-    max_date_to_return: {
+    }
+    returned_date:{
         type: Date,
-            default:  function(){return +new Date() + 2*7*24*60*60*1000}
+        default: Date.now()
     }
 })
 
-history_schema.index({user_id: 1, book_id: 1});
+history_schema.index({user_id: 1, book_id: 1, date: -1});
 
 
 
@@ -147,7 +166,7 @@ Request Body -
 
 Validations - Joi - login_schema
 1. Validating email for emails.
-2. Validating password for at least one uppercase, one lowercase, one special character and length of password greater than 6.
+2. Validating password..
 
 User.find({user_email}) in Users database.
 
@@ -155,7 +174,7 @@ Response Body-
 status_code:200,
 {	
 	data:"jwt token:jwt.sign({user},environment variable key)",
-	message:"you are logged in"
+	message:"Logged in"
 }
 
 Body if user not found.
@@ -163,6 +182,12 @@ error_code:404,
 {
 	data:null,
 	message:"User not found"
+}
+Body if wrong credentials.
+error_code:401,
+{
+	data:null,
+	message:”Wrong Credentials”
 }
 
 ---------------------------------------------------------------
@@ -176,19 +201,16 @@ Request Body -
 	name,
 	email,
 	password,
-	is_admin,
-	dob,
-	age,
-	is_active
+	dob
 }
 
 Validations - Joi - registration_schema
-1. Validating name for only english alphabets with its length in range of 2 to 20
-2. Validating password for at least one uppercase, one lowercase, one special character and length of password greater than 6.
-3. Validating email for minimum length 4, no special characters, must have '@' , domain name without special characters and domain extension only .com or .net.
+1. Validating name.
+2. Validating password.
+3. Validating email for emails.
 
 Search if the user already exists or not.
-Create new documents in the User collection using insertOne() method.
+Create new documents in the User collection using save() method.
 
 Response Body -
 status_code:200,
@@ -212,34 +234,33 @@ error_code:409,
 API - localhost:3000/book/new
 Method - POST
 
+JWT token in headers.
 Request Body -
 {
-	jwt token,
 name,
 	price,
 	published,
 	pages,
 	author,
 	genre,
-	age_appropriation,
-	copies,
-	is_discarded
+	age_rated,
+	copies
 }
 
 Token Verification -
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 Validations- Joi- new_book_schema
-1. Validating copies, pages, age_appropriation and price for numbers only.
-2. Validating author, genre for strings only.
+1. Validating copies, pages, age_rated and price for numbers only.
+2. Validating author, genre for strings.
 3. Validating published for date only.
 
 
-if verified->
+if verified-
 
 if user_is_admin (from jwt payload) is true-
 
-Use insertOne on Book collection
+Use save() on Book collection
 
 Response Body -
 status_code:200,
@@ -271,21 +292,22 @@ error_code:440,
 ---------------------------------------------------------------
 
 
-4. Updating book copies
-API - localhost:3000/book/updatecopies
+4. Updating book
+API - localhost:3000/book/update
 Method - POST
 
+JWT token in headers.
 Request Body -
 {
-	jwt token,
-	name,
+	book_id,
 	copies,
-	author
+	genre,
+	price
 }
 
 
 Token Verification -
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 Validations - Joi-copies_update_schema
 1. Validating copies for numbers only.
@@ -295,7 +317,14 @@ Validations - Joi-copies_update_schema
 if verified ->
 
 if user_is_admin (from jwt payload) is true-
-Use findOneAndUpdate({name,author},{copies:req.body.copies)
+
+If req.body.copies != null
+Use book_id to find and update book copies.
+If req.body.genre != null
+Use book_id to find and update book genres.
+If req.body.price != null
+Use book_id to find and update book price.
+
 
 Response Body -
 status_code:200,
@@ -330,31 +359,30 @@ error_code:440,
 
 5. Get total cost spent by the particular user in last 100 days
 
-API - localhost:3000/history/amountspent
+API - localhost:3000/user/amount
 Method - GET
 
+JWT token in headers.
 Request Body -
 {
-	jwt token,
-	name,
 	email
 }
 
 
 Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 Validation- Joi-user_schema
-1. Validating name for only english alphabets with its length in range of 2 to 20
-2. Validating email for minimum length 4, no special characters, must have '@' , domain name without special characters and domain extension only .com or .net.
+1. Validating name for string.
+2. Validating email for emails.
 
 
 if verified ->
 
-if (user_is_admin is true) OR (user_is_admin is false and user_name in request body == user_name in jwt token)-
+if (user_is_admin is true) OR (user_is_admin is false and email in request body == user_email in jwt token)-
 
-Finding the user_id from User collection 
-Use aggregate sum for the cost field in history collection where user_id matches and (Date.now()-rented date)/(60*60*24)<=100
+Finding the user_id from User collection.
+Use aggregate sum for the cost field in history collection where ( user_id matches and (Date.now()-rented date)/(60*60*24)<=100 )
 
 
 Response Body -
@@ -388,34 +416,30 @@ error_code:440,
 ---------------------------------------------------------------------------------
 
 6. Total rented book by particular user
-API- localhost:3000/history/rentedbooks
+API- localhost:3000/user/booksrent 
 Method- GET
 
+JWT token in headers.
 Request Body -
 {
-	jwt token,
-	name,
 	email
 }
 
-
 Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 Validation- Joi-user schema
-1. Validating name for only english alphabets with its length in range of 2 to 20
-2. Validating email for minimum length 4, no special characters, must have '@' , domain name without special characters and domain extension only .com or .net.
-
+1. Validating email for emails.
 if verified ->
 
 if (user_is_admin is true) OR (user_is_admin is false and user_name in request body == user_name in jwt token)-
 Get user id using from user collection based on email and name.
-Find all the books information from history using user id.
+Find all the books information from history using user id where is_returned field is false.
 
 Response Body-
 status_code:200,
 {
-	data:all the history of rented book as array of book objects,
+	data:Rented book as array of book objects and count of books rented,
 	message: "Rented book information delivered"
 }
 
@@ -443,28 +467,27 @@ error_code:440,
 
 ---------------------------------------------------------------------------------------
 
-7. Get total books in the store
-API- localhost:3000/book/presents books
+7. Get current books in the store
+API- localhost:3000/book/currentbook
 Method- GET
 
-Request Body-
-{
-	jwt token
-}
+JWT token in headers.
 
 Token Verification-
-jwt.verify(request.body.token, secret key i.e. environment variable key)
+jwt.verify(token from headers, secret key i.e. environment variable key)
 
 if verified->
 
-Count the document in the book collection using the aggregate method.
-Count the total rented book in history collection using aggregate methods.
-Take the difference.
+
+Find the book_id, names and copies of all the books ( not including copies ).
+For each book, using its book _id, find the number of books’ copies rented in the history database.
+If rented copies < total copies of that book, add its name and book_id to the result.
+Return the book count of the result and result.
 
 Response Body-
 status_code:200,
 {
-	data: Difference,
+	Data:book count, result ,
 	message:"Books in store at present"
 }
 
@@ -492,30 +515,26 @@ error_code:422,
 
 --------------------------------------------------------------------------------
 
-8. Get books of given genre
-API- localhost:3000/book/genre
+8. Get count of books of given genre
+API- localhost:3000/book/genre/:genre
 Method- GET
 
-Request Body-
-{	
-	jwt token,
-	genre
-}
+JWT token in headers.
 
 Verification-
-jwt.verify(request.body.token, secret key i.e. environment variable key)
+jwt.verify(token from headers, secret key i.e. environment variable key)
 
 if verified->
-Validations- book_genre_schema,
-1.Validating genre for string without numbers and special characters.
 
-Use find({genre}) on book genre field in book collection
+Use genre from request parameters.
+Use count({genre}) on book genre fields in book collections.
+
 
 Response Body -
 status_code:200,
 {
-	data: found books' field(like name, price, age_appropriation),
-	message: "All the books for particular genre"
+	data: count of books,
+	message: "Books count for particular genre"
 }
 
 else-
@@ -533,50 +552,34 @@ error_code:440,
 	message:"Session expired, please login again"
 }
 
+
 ---------------------------------------------------------------------------
 
-9. Rent a book
-API- localhost:3000/history/rentbook
+9. Rent books
+API- localhost:3000/history/rentbooks
 Method- POST
 
+JWT token in headers.
 Request Body-
 {
-	jwt token,
-name
+	Book_name:[book_id1, book_id2,...]
 }
 
-Token Verification-
-jwt.verify(request.body.token, secret key i.e. environment variable key)
+Token Verification->
+jwt.verify(token from headers, secret key i.e. environment variable key)
 
 if verified->
+Validations- Joi rent_books_schema
 
-Validations- Joi rent-book-schema
+Count the number of books issued to the user.
+If less than 10->
 
+Get the book_id from book collections whose is_discarded field is false using book_names and rated_age is greater than equal to age of user and add them in an array. 
+Now for each book_id search in the history collection for rented books, to find books available. If not available, remove that _id form the array. 
+If the same user had issued the book, then also remove that _id from the array.
 
-1.Check total no. of books currently rented to this user.
-if less than 10 books->
-	Search for the book in book collections.
-	Now search in history collection for available books
-	If available and same copy of book issued earlier-> 
-		Reject the rent request with message
-		Response body-
-		status_code:200,
-		{
-			data:null,
-			message:"No more copies available"
-		}
-
-
-
-	Else If available and no same copy of book issued earlier-> 
+Loop for the array till the book issued reaches a maximum limit of 10 books.
 		Insert the document in history collection
-		Response Body-
-		status_code:200,
-		{
-			data: Book object with some of its field and issued date and max date of submission and cost,
-			message:"Book issued"
-
-		}
 
 If greater than equal to 10->
 		Response Body-
@@ -585,53 +588,6 @@ If greater than equal to 10->
 			data:null,
 			message:"Issued book limit reached"
 		}
-
-If not verified->
-Body if jwt not verified.
-error_code:403,
-{
-	data:null,
-	message:"Forbidden: Access is denied"
-}
-Body if jwt expired.
-error_code:440,
-{
-	data:null,
-	message:"Session expired, please login again"
-}
-Body if validation failed.
-error_code:422,
-{
-	data:null,
-	message:"Validation error"
-}
-
----------------------------------------------------------------------------
-
-10. Rent more books
-API- localhost:3000/history/rentbooks
-Method- POST
-
-
-Request Body-
-{
-	jwt token,
-	book_name:[
-				{book1 field},
-				{book2 field},
-				.
-				.
-				.
-				]
-}
-
-Token Verification->
-jwt.verify(request.body.token, secret key i.e. environment variable key)
-
-if verified->
-Validations- Joi rent_books_schema
-
-First perform search that which books are available to issue, then user insertMany to insert all the books in history and renting the books.(some checks are same as in API 9)
 
 Response Body-
 status_code:200,
@@ -658,21 +614,18 @@ error_code:440,
 
 -----------------------------------------------------------------------------------------
 
-11. Total rented books
-API- localhost:3000/history/rentedbooks
+10. Total rented books
+API- localhost:3000/history/rentedbook
 Method- GET
 
-Request Body -
-{
-	jwt token,
-}
+JWT token in headers.
 
 Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 if verified ->
 
-Use aggregate sum to find all the books from history that are rented.
+Use count to find all the books from history whose is_returned field is false.
 
 Response Body-
 status_code:200,
@@ -699,30 +652,25 @@ error_code:440,
 
 -----------------------------------------------------------------------
 
-12. Get all books from given author
-API- localhost:3000/book/author
+11. Get all books from given author
+API- localhost:3000/book/author/:author
 Method- GET
 
-Request Body -
-{
-	jwt token,
-	author
-}
+JWT token in headers.
 
 Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 if verified ->
 
-Validations - Joi book_author_schema
-1. Validating author for strings without special characters and numbers.
-
-Search the books collection using find({author:}) method.
+Take author name from request parameters.
+Search the books collection using find() on the author name field method.
+Use 20 as a maximum limit to be sent in the response body.
 
 Response Body-
 status_code:200,
 {
-	data:count of books of given author,
+	data:count of books and book objects,
 	message:"Total count retrieved successfully"
 }
 
@@ -746,222 +694,32 @@ error_code:422,
 }
 
 
------------------------------------------------------------------------
-
-13. Update the price of a book
-API - localhost:3000/updateprice
-Method - POST
-
-Request Body -
-{
-	jwt token,
-name,
-	price,
-	author
-}
-
-
-
-Token Verification
-jwt.verify(request.body.token,secret key i.e. environment variable key)
-
-
-if verified ->
-
-Validations- Joi- price_update_schema
-1. Validating price for numbers only.
-2. Validating author for strings without special characters and numbers.
-
-if user_is_admin (from jwt) is true
-Use findOneAndUpdate({book_name,book_author},{price:req.body.book_price)
-
-Response Body -
-status_code:200,
-{
-	data:few details of updated book fields,
-	message:"Book's price updated"
-}
-
-else ->
-
-Body if book not found.
-error_code:404,
-{
-	data:null,
-	message:"Book not found"
-}
-Body if the user is not admin.
-error_code:403,
-{	
-	data:null,
-	message:"Forbidden: Access is denied"
-}
-Body if jwt expired.
-error_code:440,
-{
-	data:null,
-	message:"Session expired, please login again"
-}
-Body if validation failed.
-error_code:422,
-{
-	data:null,
-	message:"Validation error"
-}
-
-
--------------------------------------------------------------------------
-
-14. Update genre of the book
-API - localhost:3000/updatebookgenre
-Method - POST
-
-Request Body -
-{
-	jwt token,
-Name,
-Genre,
-author
-}
-
-Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
-
-if verified ->
-
-Validations- genre_update_schema
-1. Validating author, genre for strings without special characters and numbers.
-
-Use findOneAndUpdate({book_name,book_author},{copies:req.body.book_genre)
-
-Response Body -
-status_code:200,
-{
-	data:few details of updated book fields,
-	message:"Book's genre updated"
-}
-
-else ->
-
-Body if book not found.
-error_code:404,
-{
-	data:null,
-	message:"Book not found"
-}
-Body if user_is_admin is false or jwt verification failed.
-error_code:403,
-{
-	data:null,
-	message:"Forbidden: Access is denied"
-}
-Body if jwt expired.
-error_code:440,
-{
-	data:null,
-	message:"Session expired, please login again"
-}
-Body if validation failed.
-error_code:422,
-{
-	data:null,
-	message:"Validation error"
-}
-
-
 ----------------------------------------------------------------------------
 
-15. Remove a book from bookstore
-API- localhost:3000/book/remove
-Method- DELETE
 
-Request Body -
-{
-	jwt token,
-	name,
-author
-}
-
-Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
-
-if verified ->
-
-Validations- Joi- book_name_author_schema
-1. Validating book_author for strings  without special characters and numbers.
-
-If a book is rented, it cannot be removed.
-If a book is not found, return 404.
-If the book is found and not rented, change its is_discarded field to true.
-
-if(successful deletion)
-Response Body-
-status_code:200,
-{
-	data:book field which is deleted,
-	message:"Book deleted"
-}
-
-if(no such book found)
-error_code:404,
-{
-	data:null,
-	message:"Book not found"
-}
-Other error response-
-Body if user_is_admin is false or jwt verification failed.
-error_code:403,
-{
-	data:null,
-	message:"Forbidden: Access is denied"
-}
-Body if jwt expired.
-error_code:440,
-{
-	data:null,
-	message:"Session expired, please login again"
-}
-Body if validation failed.
-error_code:422,
-{
-	data:null,
-	message:"Validation error"
-}
-
-----------------------------------------------------------------------
-
-16. Remove books from the book store
+12. Remove books from the book store
 API- localhost:3000/removebooks
 Method- DELETE
 
+JWT token in headers.
 Request Body -
 {
-	jwt token,
-	book:[
-		{book_name1,book_author1},
-		{book_name2,book_author2},
-		...
-		],
-	
+	book: [ book_id1, book_id2]
 }
 
 Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 if verified->
 
-Validation
-1. Validating author for strings  without special characters and numbers.
-
-If a book is rented, it cannot be removed.
-If a book is not found, return 404.
-If the book is found and not rented, change its is_discarded field to true.
+For each book_id, If the is_discarded is false, add their _id in an array.
+Use Update many and  change its is_discarded field to true.
 
 
 Response Body-
 status_code:200,
 {
-	data:all the deleted book names,
+	data: array of books whose is_discarded field is changed. 
 	message:"Books removed"
 }
 
@@ -986,29 +744,21 @@ error_code:422,
 
 -----------------------------------------------------------------------
 
-17. Get the number of days after which if a book is rented, it can be rented by another customer
-API- localhost:3000/book/date
+13. Get the number of days after which if a book is rented, it can be rented by another customer
+API- localhost:3000/book/date/book_name
 Method- GET
 
-Request Body -
-{
-	jwt token,
-	name,
-	author
-}
+JWT token in headers.
 
 Token Verification-
-jwt.verify(request.body.token,secret key i.e. environment variable key)
-
-Validations- Joi- book_name_author_schema
-1. Validating book_author for strings  without special characters and numbers.
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 if verified->
 
 Find books in the books collection and get its book id.
 Count the number of copies of that book is rented currently.
 If the book's copies are greater than the count of rented books, return the present date.
-Else find a particular book issued in history collection using book id and then take out the earliest date to be returned.
+Else find the book issued in history collection using book id whose is_returned field is false and sorted on the date of issue in ascending order, return the 14 - (first rent date field).
 
 if books are available->
 Response Body-
@@ -1019,11 +769,10 @@ status_code:200,
 	message:"Book is available to be rented"
 }
 if book is not available->
-Find the earliest issued book in history collection that was rented.
 Response Body-
 status_code:200,
 {
-	data: difference in maximum rented date/time and current date/time (in days),
+	data: difference in minimum rented date/time and current date/time (in days),
 	message:"Book will be available soon"
 }  
 Body if book not found.
@@ -1056,33 +805,27 @@ error_code:422,
 
 -----------------------------------------------------------------------
 
-18. Get all the books from written by an author whose name matches a given pattern 
- - eg: smith _lastname_
+14. Get all the books from written by an author whose name matches a given pattern
+Since the Author name has Text Indexing on the book collection.
 
-API- localhost:3000/book/matchauthor
+API- localhost:3000/book/match/author
 Method- GET
 
-Request Body -
-{
-	jwt token,
-	author
-}
+JWT token in headers.
 
 Token Verification
-jwt.verify(request.body.token,secret key i.e. environment variable key)
-
-Validations- Joi-book_author_schema
-1. Validating book_author for strings only.
+jwt.verify(token from headers,secret key i.e. environment variable key)
 
 if verified->
 
-Use find({author:/req.body.book_author/}) in mongoose that will return all documents with complete or partial match.
+Use find({$author:{$search : author from request params}}) in mongoose that will return all documents with complete or partial match.
+Use pagination to limit 50 books per page.
 
 Response body-
 status_code:200,
 {	
-	data: returned objects of query,
-	message:`Books whose author name partially matches with {req.body.book_author}`
+	data: book objects with name, id and author name,
+	message: ’Books with partial or complete author match’
 }
 
 
@@ -1106,3 +849,135 @@ error_code:422,
 	data:null,
 	message:"Validation error"
 }
+
+
+---------------------------------------------------------------------------------
+
+15. Return books
+API- localhost:3000/history/returnbook
+Method- POST
+
+JWT token in headers.
+Request Body-
+{
+	Book_name:[book_id1, book_id2,...]
+}
+
+Using book_id check if the book exits.
+Using email in jwt find user_id.
+Using user_id and book_id, update returned date to date.now() and is_returned to true.
+Response Body-
+{
+	data: Return the name of books returned,
+	message: “Book returned”
+}
+
+
+if not verified->
+
+Body if jwt verification failed.
+error_code:403,
+{	
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+Body if validation failed.
+error_code:422,
+{
+	data:null,
+	message:"Validation error"
+}
+
+-----------------------------------------------------------------------------------------------
+
+16. Creating new admin
+API - localhost:3000/user/newadmin
+Method - POST
+
+JWT token in headers.
+Request Body -
+{
+	email,
+}
+
+Token Verification -
+jwt.verify(token from headers,secret key i.e. environment variable key)
+
+Validations- 
+1. Validating for emails.
+
+
+if verified-
+
+if user_is_admin (from jwt payload) is true-
+Find and update the user using its email address.
+If user_is_admin is false-
+
+
+Response Body -
+status_code:200,
+{
+	data: new admin name and email,
+	message:"Admin created"
+}
+
+
+Body if user_is_admin is false.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
+----------------------------------------------------------------------------------------
+
+
+17. Get all users
+API - localhost:3000/user/all
+Method - POST
+
+JWT token in headers.
+
+Token Verification -
+jwt.verify(token from headers,secret key i.e. environment variable key)
+
+
+
+if verified-
+
+if user_is_admin (from jwt payload) is true-
+Return the users with name, email and user_id with a limit of 100 users.
+
+Response Body -
+status_code:200,
+{
+	data: return name, email, user_id,
+	message:"Admin created"
+}
+
+
+Body if user_is_admin is false.
+error_code:403,
+{
+	data:null,
+	message:"Forbidden: Access is denied"
+}
+Body if jwt expired.
+error_code:440,
+{
+	data:null,
+	message:"Session expired, please login again"
+}
+
