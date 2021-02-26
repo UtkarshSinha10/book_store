@@ -75,8 +75,8 @@ exports.author_validator = (req, res, next) => {
 };
 
 
-exports.book_name_author_validator = (req, res, next) => {
-  const valid = validate_schema.book_name_author_schema.validate(req.body);
+exports.book_id_array_validator = (req, res, next) => {
+  const valid = validate_schema.book_id_array_schema.validate(req.body);
   if (valid.error) {
     res.status(422).json(validation_body.invalid_body('Validation Failed'));
   } else {

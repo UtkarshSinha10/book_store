@@ -179,8 +179,6 @@ exports.remove_books = async (req, res) => {
     if (user_is_admin) {
       const book_array = req.body.book;
       const new_book_array = book_array.map((book) => book.book_id);
-      // const removed_book = [];
-      // const not_found_book = [];
       const book_modification_details = await book_query.remove_book(new_book_array);
       return res.status(200).json({
         data: `Books removed ${book_modification_details.nModified}`,
@@ -203,8 +201,11 @@ exports.remove_books = async (req, res) => {
 
 exports.books_by_author_match = async (req, res) => {
   try {
-    const book_list = await book_query.books_by_author_match(req.body.book_author);
-    if (book_list.length()>0) {
+    const author = req.query.author;
+    const skip = Number(req.query.skip);
+    const limit = Number(req.query.limit);
+    const book_list = await book_query.books_by_author_match(author, skip, limit);
+    if (book_list.length>0) {
       return res.status(200).json({
         data: book_list,
         message: 'Search by matching author\'s name successful',
@@ -216,9 +217,10 @@ exports.books_by_author_match = async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err.message);
     return res.status(400).json({
       data: null,
-      message: 'Error while searching books based on matching author\'s name',
+      message: 'Error while searching books',
     });
   }
 };

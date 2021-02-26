@@ -15,9 +15,9 @@ routes.get('/genre', authorize.authorization, book_controller.book_by_genre);
 
 routes.get('/author', authorize.authorization, book_controller.book_by_author);
 
-routes.delete('/remove', authorize.authorization, validator.book_name_author_validator, book_controller.remove_books);
+routes.delete('/remove', authorize.authorization, validator.book_id_array_validator, book_controller.remove_books);
 
-// routes.get('/matchauthor', authorize.authorization, validator.author_validator, book_controller.book_by_author_match);
+routes.get('/match', authorize.authorization, book_controller.book_by_author_match);
 
 // routes.get('/date',authorize.authorization,validator.book_name_author_validator,book_controller.book_by_earliest_date);
 

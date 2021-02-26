@@ -80,16 +80,9 @@ exports.books_by_author = async (author, skip, limit) => {
   }
 };
 
-exports.books_by_author_match= async (book_author_substring) => {
+exports.books_by_author_match= async (author, skip, limit) => {
   try {
-    const book_list = await Book.find({
-      $match: {
-        author: {
-          '$regex': book_author_substring,
-          '$options': 'i',
-        },
-      },
-    });
+    const book_list = await Book.find({'$text': {'$search': author}}).skip(skip).limit(limit);
     return book_list;
   } catch (err) {
     throw err;

@@ -70,7 +70,7 @@ const book_id_object_schema = Joi.object().keys({
 
 });
 
-exports.book_name_author_schema = Joi.object().keys({
+exports.book_id_array_schema = Joi.object().keys({
 
   book: Joi.array().items(book_id_object_schema),
 

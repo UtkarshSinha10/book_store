@@ -807,7 +807,7 @@ error_code:422,
 14. Get all the books from written by an author whose name matches a given pattern
 Since the Author name has Text Indexing on the book collection.
 
-API- localhost:3000/book/match/author
+API- localhost:3000/book/match/?author=abcd&skip=a&limit=b
 Method- GET
 
 JWT token in headers.
