@@ -515,7 +515,7 @@ error_code:422,
 --------------------------------------------------------------------------------
 
 8. Get count of books of given genre
-API- localhost:3000/book/genre/?genre=****&limit=***
+API- localhost:3000/book/genre/?genre=****&skip=a&limit=b
 Method- GET
 
 JWT token in headers.
@@ -652,7 +652,7 @@ error_code:440,
 -----------------------------------------------------------------------
 
 11. Get all books from given author
-API- localhost:3000/book/author/:author
+API- localhost:3000/book/author/?author=******&skip=a&limit=b
 Method- GET
 
 JWT token in headers.
@@ -697,13 +697,13 @@ error_code:422,
 
 
 12. Remove books from the book store
-API- localhost:3000/removebooks
+API- localhost:3000/book/remove
 Method- DELETE
 
 JWT token in headers.
 Request Body -
 {
-	book: [ book_id1, book_id2]
+	book: [ {book_id: book_id1},{book_id: book_id2}]
 }
 
 Token Verification-
@@ -944,7 +944,7 @@ error_code:440,
 
 
 17. Get all users
-API - localhost:3000/user/all/?skip=1&limit=50
+API - localhost:3000/user/all/?skip=a&limit=b
 Method - GET
 
 JWT token in headers.

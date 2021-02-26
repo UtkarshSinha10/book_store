@@ -64,9 +64,14 @@ exports.book_author_schema = Joi.object().keys({
 
 });
 
+const book_id_object_schema = Joi.object().keys({
+
+  book_id: Joi.string().required(),
+
+});
+
 exports.book_name_author_schema = Joi.object().keys({
 
-  name: Joi.string().required(),
-  author: Joi.string().min(3).max(30).required(),
+  book: Joi.array().items(book_id_object_schema),
 
 });

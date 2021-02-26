@@ -12,9 +12,17 @@ exports.find_a_book_by_name = async (name) => {
 
 exports.find_a_book_by_id = async (id) => {
   try {
-    // eslint-disable-next-line new-cap
     const found_book = await Book.findOne({_id: id});
     return found_book;
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.remove_book = async (id) => {
+  try {
+    const found_books = await Book.updateMany({_id: {'$in': id}}, {is_discarded: true});
+    return found_books;
   } catch (err) {
     throw err;
   }
@@ -54,18 +62,18 @@ exports.count_total_books = async () => {
   }
 };
 
-exports.books_by_genre = async (genre, limit) => {
+exports.books_by_genre = async (genre, skip, limit) => {
   try {
-    const books_by_genre = await Book.find({genre: genre}).select('id name price published author').limit(limit);
+    const books_by_genre = await Book.find({genre: genre}).select('id name price published author').skip(skip).limit(limit);
     return books_by_genre;
   } catch (err) {
     throw err;
   }
 };
 
-exports.books_by_author = async (author) => {
+exports.books_by_author = async (author, skip, limit) => {
   try {
-    const books_by_author = await Book.find({author: author});
+    const books_by_author = await Book.find({author: author}).select('id name price published').skip(skip).limit(limit);
     return books_by_author;
   } catch (err) {
     throw err;

@@ -20,8 +20,8 @@ exports.book_by_author = (req, res, next) => {
   book_service.books_by_author(req, res);
 };
 
-exports.remove_book = (req, res, next) => {
-  book_service.remove_book(req, res);
+exports.remove_books = (req, res, next) => {
+  book_service.remove_books(req, res);
 };
 
 exports.book_by_author_match = (req, res, next) => {

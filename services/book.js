@@ -123,9 +123,10 @@ exports.books_by_genre = async (req, res) =>{
   console.log('hi');
   try {
     const genre = req.query.genre;
+    const skip = req.query.skip;
     const limit = Number(req.query.limit);
     console.log(genre);
-    const book_list = await book_query.books_by_genre(genre, limit);
+    const book_list = await book_query.books_by_genre(genre, skip, limit);
     if (book_list) {
       return res.status(200).json({
         data: book_list,
@@ -147,7 +148,10 @@ exports.books_by_genre = async (req, res) =>{
 
 exports.books_by_author = async (req, res) =>{
   try {
-    const book_list = await book_query.books_by_author(req.body.author);
+    const author = req.query.author;
+    const skip = req.query.skip;
+    const limit = req.query.limit;
+    const book_list = await book_query.books_by_author(author, skip, limit);
     if (book_list.length>0) {
       return res.status(200).json({
         data: book_list,
@@ -167,30 +171,29 @@ exports.books_by_author = async (req, res) =>{
   }
 };
 
-exports.remove_book = async (req, res) => {
+exports.remove_books = async (req, res) => {
   try {
-    const found_book = await book_query.find_a_book_by_name(req.body.name);
-    if (!found_book) {
-      return res.status(404).json({
-        data: null,
-        message: 'No such book found',
-      });
-    }
-    const rented_book_count = history_query.find_book_by_book_id(found_book.book_id);
-
-    if (rented_book_count>0) {
-      return res.status(400).json({
-        data: null,
-        message: 'Book is rented, so removal not possible',
+    const token = req.headers.authorization.split(' ')[1];
+    const payload = jwt.verify(token, process.env.mysecretkey);
+    const user_is_admin = payload.user_is_admin;
+    if (user_is_admin) {
+      const book_array = req.body.book;
+      const new_book_array = book_array.map((book) => book.book_id);
+      // const removed_book = [];
+      // const not_found_book = [];
+      const book_modification_details = await book_query.remove_book(new_book_array);
+      return res.status(200).json({
+        data: `Books removed ${book_modification_details.nModified}`,
+        message: 'Book removed',
       });
     } else {
-      const removed_book = book_query.remove_book(req.book_name);
-      return res.status(200).json({
-        data: removed_book,
-        message: 'Book removed',
+      return res.status(403).json({
+        data: null,
+        message: 'Forbidden: Access is denied',
       });
     }
   } catch (err) {
+    console.log(err);
     return res.status(400).json({
       data: null,
       message: 'Error while removing a book',
@@ -243,4 +246,4 @@ exports.books_by_author_match = async (req, res) => {
 //             message: "Error occured"
 //         })
 //     }
-// }
+// };
