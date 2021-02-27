@@ -20,7 +20,7 @@ exports.login = async (req, res) => {
       const token = jwt.sign({
         user_email: user.email,
         user_is_admin: user.is_admin,
-      }, process.env.mysecretkey, {expiresIn: '1h'});
+      }, process.env.mysecretkey, {expiresIn: '10h'});
 
       return res.status(200).json({
         data: token,
@@ -147,3 +147,4 @@ exports.get_all_users = async (req, res) => {
     });
   }
 };
+

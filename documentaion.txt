@@ -358,7 +358,7 @@ error_code:440,
 
 5. Get total cost spent by the particular user in last 100 days
 
-API - localhost:3000/user/amount
+API - localhost:3000/history/amountspent
 Method - GET
 
 JWT token in headers.
@@ -372,8 +372,7 @@ Token Verification-
 jwt.verify(token from headers,secret key i.e. environment variable key)
 
 Validation- Joi-user_schema
-1. Validating name for string.
-2. Validating email for emails.
+1. Validating email for emails.
 
 
 if verified ->
@@ -561,7 +560,7 @@ Method- POST
 JWT token in headers.
 Request Body-
 {
-	Book_name:[book_id1, book_id2,...]
+	book: [ {book_id: book_id1},{book_id: book_id2}]
 }
 
 Token Verification->
