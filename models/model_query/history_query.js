@@ -41,6 +41,15 @@ exports.amount_spent = async (id, last_date) => {
   }
 };
 
+exports.find_all_rented_books = async () =>{
+  try {
+    const rented_books = await History.aggregate([{'$match': {is_returned: false}}, {'$group': {_id: '$book_id'}}]);
+    return rented_books;
+  } catch ( err ) {
+    throw err;
+  }
+};
+
 // exports.count_rented_books = async () =>{
 //   try {
 //     const total_rented_books = History.count({is_returned: false});

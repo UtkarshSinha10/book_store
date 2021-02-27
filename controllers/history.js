@@ -7,3 +7,7 @@ exports.rent_books = (req, res, next) => {
 exports.amount_spent = (req, res, next) => {
   history_service.amount_spent(req, res);
 };
+
+exports.rented_books = (req, res, next) => {
+  history_service.rented_books(req, res);
+};

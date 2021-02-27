@@ -9,7 +9,7 @@ const routes = express.Router();
 
 routes.get('/amountspent', authorize.authorization, validator.new_admin_validator, history_controller.amount_spent);
 
-// routes.get('/rentedbooks', authorize.authorization, validator.user_validator, history_controller);
+routes.get('/rentedbooks', authorize.authorization, history_controller.rented_books);
 
 routes.post('/rentbooks', authorize.authorization, validator.book_id_array_validator, history_controller.rent_books);
 

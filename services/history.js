@@ -96,3 +96,19 @@ exports.amount_spent = async (req, res) => {
     });
   }
 };
+
+exports.rented_books = async (req, res) => {
+  try {
+    const rented_books = await history_query.find_all_rented_books();
+    console.log(rented_books);
+    res.status(200).json({
+      data: rented_books,
+      message: 'Rented Book Ids',
+    });
+  } catch (err) {
+    res.status(400).json({
+      data: null,
+      message: 'Error while finding rented books',
+    });
+  }
+};
