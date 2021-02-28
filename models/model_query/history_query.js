@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 /* eslint-disable max-len */
 const Mongoose = require('mongoose');
 const History = require('../model_schema/history');
@@ -73,8 +74,18 @@ exports.rented_books_to_user = async (id) => {
 
 exports.rented_copies_of_book = async (id) => {
   try {
-    const rented_copies_of_book = await History.aggregate([{'$match': {book_id: id, is_returned: false}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
+    const rented_copies_of_book = await History.aggregate([{'$match': {'$and': [{book_id: Mongoose.Types.ObjectId(id)}, {is_returned: false}]}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
+    console.log(rented_copies_of_book);
     return rented_copies_of_book;
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.find_earliest_date = async (book_id) => {
+  try {
+    const history = await History.find({book_id: book_id, is_returned: false}).sort({rent_date: 1}).limit(1);
+    return history;
   } catch (err) {
     throw err;
   }

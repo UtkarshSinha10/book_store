@@ -743,7 +743,7 @@ error_code:422,
 -----------------------------------------------------------------------
 
 13. Get the number of days after which if a book is rented, it can be rented by another customer
-API- localhost:3000/book/date/book_name
+API- localhost:3000/book/date/?book_id=.......
 Method- GET
 
 JWT token in headers.

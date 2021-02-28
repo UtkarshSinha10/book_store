@@ -26,7 +26,7 @@ routes.delete('/remove', authorize.authorization, validator.book_id_array_valida
 routes.get('/match', authorize.authorization, book_controller.book_by_author_match);
 
 // API 13
-// routes.get('/date',authorize.authorization,validator.book_name_author_validator,book_controller.book_by_earliest_date);
+routes.get('/date', authorize.authorization, book_controller.book_by_earliest_date);
 
 // API 7
 routes.get('/currentbook', authorize.authorization, book_controller.current_books);

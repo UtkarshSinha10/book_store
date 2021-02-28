@@ -128,7 +128,6 @@ exports.current_books = async (req, res) => {
       message: 'Books present details',
     });
   } catch (err) {
-    console.log(err);
     res.status(400).json({
       data: null,
       message: 'Not able to get current books',
@@ -238,27 +237,46 @@ exports.books_by_author_match = async (req, res) => {
   }
 };
 
-// exports.book_by_earliest_date = async (req,res) => {
-//     try{
-//         const book = await book_query.find_a_book_by_name(req.body.book_name);
-//         const copies_of_book_rented = await history_query.find_rented_book_in_history(req.body.book_name);
-//         if(book.copies - copies_of_book_rented>0){
-//             res.status(200).json({
-//                 data : book,
-//                 message: "Book is available to be rented"
-//             })
-//         }else{
-//             const earliest_date = await history_query.find_available_date(req.body.book_name);
-//             if(earliest_date.length){
-
-//             }else{
-
-//             }
-//         }
-//     }catch(err){
-//         res.status().json({
-//             data: null,
-//             message: "Error occured"
-//         })
-//     }
-// };
+exports.book_by_earliest_date = async (req, res) => {
+  try {
+    const book_id = req.query.book_id;
+    const book = await book_query.find_a_book_by_id(book_id);
+    if (book) {
+      if (!book.is_discarded) {
+        const book_rented = await history_query.rented_copies_of_book(book_id);
+        if (book_rented.length) {
+          const difference = Number(book.copies) - Number(book_rented[0].total);
+          if (difference == 0) {
+            const history = await history_query.find_earliest_date(book_id);
+            const rent_date = new Date(history[0].rent_date);
+            const available_date = dateFormat(new Date(rent_date.setDate(rent_date.getDate()+14)), 'yyyy-mm-dd');
+            res.status(200).json({
+              data: available_date,
+              message: 'Book will be earrliest avialble on given date',
+            });
+          }
+        } else {
+          res.status(200).json({
+            data: dateFormat(new Date()),
+            message: 'Book is available to issue',
+          });
+        }
+      } else {
+        res.status(200).json({
+          data: null,
+          message: 'Book removed from the store',
+        });
+      }
+    } else {
+      res.status(404).json({
+        data: null,
+        message: 'Book not found',
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      data: null,
+      message: 'Error while getting date',
+    });
+  }
+};

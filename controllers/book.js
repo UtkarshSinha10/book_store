@@ -28,6 +28,10 @@ exports.book_by_author_match = (req, res, next) => {
   book_service.books_by_author_match(req, res);
 };
 
+exports.book_by_earliest_date = (req, res, next) => {
+  book_service.book_by_earliest_date(req, res);
+};
+
 // exports.book_by_earliest_date =(req,res,next) => {
 //     book_service.book_by_earliest_date(req,res);
 // }
