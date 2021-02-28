@@ -64,8 +64,17 @@ exports.find_all_rented_books = async () => {
 
 exports.rented_books_to_user = async (id) => {
   try {
-    const rented_books_to_user = await History.find({_id: id, is_returned: false});
+    const rented_books_to_user = await History.find({book_id: id, is_returned: false});
     return rented_books_to_user;
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.rented_copies_of_book = async (id) => {
+  try {
+    const rented_copies_of_book = await History.aggregate([{'$match': {book_id: id, is_returned: false}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
+    return rented_copies_of_book;
   } catch (err) {
     throw err;
   }

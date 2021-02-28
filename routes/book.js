@@ -29,6 +29,6 @@ routes.get('/match', authorize.authorization, book_controller.book_by_author_mat
 // routes.get('/date',authorize.authorization,validator.book_name_author_validator,book_controller.book_by_earliest_date);
 
 // API 7
-// routes.get('/currentbook', authorize.authorization, book_controller.current_books);
+routes.get('/currentbook', authorize.authorization, book_controller.current_books);
 
 module.exports = routes;

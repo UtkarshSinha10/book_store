@@ -21,4 +21,5 @@ routes.get('/bookstouser', authorize.authorization, validator.new_admin_validato
 
 // API 15 return books
 routes.put('/returnbooks', authorize.authorization, validator.book_id_array_validator, history_controller.return_books);
+
 module.exports = routes;

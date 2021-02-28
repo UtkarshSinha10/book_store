@@ -71,6 +71,15 @@ exports.books_by_genre = async (genre, skip, limit) => {
   }
 };
 
+exports.books_registered_in_store = async (skip, limit) => {
+  try {
+    const books_registered_in_store = await Book.find().select('id name copies').skip(skip).limit(limit);
+    return books_registered_in_store;
+  } catch (err) {
+    throw err;
+  }
+};
+
 exports.books_by_author = async (author, skip, limit) => {
   try {
     const books_by_author = await Book.find({author: author}).select('id name price published').skip(skip).limit(limit);

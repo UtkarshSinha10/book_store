@@ -47,7 +47,7 @@ exports.new_book = async (req, res) => {
   }
 };
 
-exports.update_book = async (req, res) =>{
+exports.update_book = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -97,30 +97,46 @@ exports.update_book = async (req, res) =>{
   }
 };
 
-exports.current_books = async (req, res) =>{
+exports.current_books = async (req, res) => {
   try {
-    const book_rented = await history_query.count_rented_books();
-    const total_book_in_store = await book_query.count_total_books();
-    if (book_rented >=0 && total_book_in_store>=0) {
-      return res.status(200).json({
-        data: total_book_in_store.total-book_rented,
-        message: 'Total books in store is returned',
-      });
-    } else {
-      return res.status(400).json({
-        data: null,
-        message: 'Something wrong in databse',
-      });
+    const skip = req.query.skip;
+    const limit = req.query.limit;
+    const books_registered_in_store = await book_query.books_registered_in_store(skip, limit);
+    const books_array = [];
+    for (let index = 0; index < books_registered_in_store.length; index++) {
+      const book_id = books_registered_in_store[index]._id;
+      const total_copies = books_registered_in_store[index].copies;
+      const rented_copies_of_book = await history_query.rented_copies_of_book(book_id);
+      if (rented_copies_of_book.length) {
+        books_array.push({
+          book_id: book_id,
+          total_copies: total_copies,
+          rented_copies: rented_copies_of_book[0].total,
+          present_copies: total_copies - rented_copies_of_book[0].total,
+        });
+      } else {
+        books_array.push({
+          book_id: book_id,
+          total_copies: total_copies,
+          rented_copies: 0,
+          present_copies: total_copies,
+        });
+      }
     }
+    res.status(200).json({
+      data: books_array,
+      message: 'Books present details',
+    });
   } catch (err) {
-    return res.status(400).json({
+    console.log(err);
+    res.status(400).json({
       data: null,
-      message: 'Error while counting books',
+      message: 'Not able to get current books',
     });
   }
 };
 
-exports.books_by_genre = async (req, res) =>{
+exports.books_by_genre = async (req, res) => {
   try {
     const genre = req.query.genre;
     const skip = req.query.skip;
@@ -145,7 +161,7 @@ exports.books_by_genre = async (req, res) =>{
   }
 };
 
-exports.books_by_author = async (req, res) =>{
+exports.books_by_author = async (req, res) => {
   try {
     const author = req.query.author;
     const skip = req.query.skip;

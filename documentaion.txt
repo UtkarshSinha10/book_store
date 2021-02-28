@@ -466,7 +466,7 @@ error_code:440,
 ---------------------------------------------------------------------------------------
 
 7. Get current books in the store
-API- localhost:3000/book/currentbook
+API- localhost:3000/book/currentbook/?skip=a&limit=b
 Method- GET
 
 JWT token in headers.
