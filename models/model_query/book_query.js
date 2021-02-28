@@ -91,7 +91,8 @@ exports.books_by_author_match= async (author, skip, limit) => {
 
 exports.book_to_be_rented = async (age, book_id_array) => {
   try {
-    const book_list = await Book.find({'$and': [{_id: book_id_array}, {is_discarded: false}, {age_rated: {'$gte': age}}]});
+    const book_list = await Book.find({'$and': [{_id: {'$in': book_id_array}}, {is_discarded: false}, {age_rated: {'$gte': age}}]});
+
     return book_list;
   } catch (err) {
     throw err;

@@ -2,6 +2,7 @@
 const book_query = require('../models/model_query/book_query');
 const history_query = require('../models/model_query/history_query');
 const jwt = require('jsonwebtoken');
+const dateFormat = require('dateformat');
 
 exports.new_book = async (req, res) => {
   try {
@@ -12,6 +13,7 @@ exports.new_book = async (req, res) => {
     if (user_is_admin) {
       const new_book = req.body;
       new_book.is_discarded=false;
+      new_book.published= new Date(dateFormat(new Date(new_book.published), 'yyyy-mm-dd'));
       const found_book = await book_query.find_a_book_by_name(new_book.name);
 
       if (found_book) {
@@ -21,7 +23,6 @@ exports.new_book = async (req, res) => {
         });
       }
       const book = await book_query.create_new_book(new_book);
-      console.log(book);
       if (!book) {
         return res.status(400).json({
           data: null,
@@ -120,12 +121,10 @@ exports.current_books = async (req, res) =>{
 };
 
 exports.books_by_genre = async (req, res) =>{
-  console.log('hi');
   try {
     const genre = req.query.genre;
     const skip = req.query.skip;
     const limit = Number(req.query.limit);
-    console.log(genre);
     const book_list = await book_query.books_by_genre(genre, skip, limit);
     if (book_list) {
       return res.status(200).json({
@@ -191,7 +190,6 @@ exports.remove_books = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     return res.status(400).json({
       data: null,
       message: 'Error while removing a book',
@@ -217,7 +215,6 @@ exports.books_by_author_match = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err.message);
     return res.status(400).json({
       data: null,
       message: 'Error while searching books',

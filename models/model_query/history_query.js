@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 const Mongoose = require('mongoose');
 const History = require('../model_schema/history');
+const dateFormat = require('dateformat');
 
 exports.count_books_rented = async (id) => {
   try {
@@ -20,6 +21,18 @@ exports.rent_books = async (rent_books_array) => {
   }
 };
 
+exports.return_books = async (id, return_books_array) => {
+  try {
+    console.log(id);
+    console.log(return_books_array);
+    const return_books = await History.updateMany({'$and': [{user_id: id}, {book_id: {'$in': return_books_array}}, {is_returned: false}]}, {is_returned: true, returned_date: new Date(dateFormat(new Date(), 'yyyy-mm-dd'))});
+    console.log(return_books);
+    return return_books;
+  } catch (err) {
+    throw err;
+  }
+};
+
 exports.count_books_rented_by_book_id = async (id) => {
   try {
     const count = History.countDocuments({'$and': [{book_id: id}, {is_returned: true}]});
@@ -31,7 +44,6 @@ exports.count_books_rented_by_book_id = async (id) => {
 
 exports.amount_spent = async (id, last_date) => {
   try {
-    console.log(last_date);
     const date = new Date(new Date(null).setSeconds(last_date/1000));
     // eslint-disable-next-line new-cap
     const amount = await History.aggregate([{'$match': {user_id: Mongoose.ObjectId(id), rent_date: {'$gte': date}}}, {'$group': {_id: null, total: {'$sum': '$book_price'}}}]);
@@ -41,11 +53,20 @@ exports.amount_spent = async (id, last_date) => {
   }
 };
 
-exports.find_all_rented_books = async () =>{
+exports.find_all_rented_books = async () => {
   try {
-    const rented_books = await History.aggregate([{'$match': {is_returned: false}}, {'$group': {_id: '$book_id'}}]);
+    const rented_books = await History.aggregate([{'$match': {is_returned: false}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
     return rented_books;
-  } catch ( err ) {
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.rented_books_to_user = async (id) => {
+  try {
+    const rented_books_to_user = await History.find({_id: id, is_returned: false});
+    return rented_books_to_user;
+  } catch (err) {
     throw err;
   }
 };

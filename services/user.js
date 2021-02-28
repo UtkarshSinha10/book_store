@@ -1,4 +1,6 @@
+/* eslint-disable max-len */
 const user_query = require('../models/model_query/user_query');
+const dateFormat = require('dateformat');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -52,7 +54,6 @@ exports.register = async (req, res) => {
 
     bcrypt.hash(req.body.password, 10, async (err, hash_password) => {
       if (err) {
-        console.log(err);
         return res.status(500).json({
           data: null,
           message: 'Error occured while password encrption',
@@ -62,6 +63,7 @@ exports.register = async (req, res) => {
         new_user.password = hash_password;
         new_user.is_admin = false;
         new_user.is_active = true;
+        new_user.dob = new Date(dateFormat(new Date(new_user.dob), 'yyyy-mm-dd'));
         const registered = await user_query.register_user(new_user);
 
         const token = jwt.sign({

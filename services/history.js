@@ -13,9 +13,10 @@ exports.rent_books = async (req, res) => {
     const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
-    const id = user.id;
+    const id = user._id;
     const age = parseFloat(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(0, 4))-Number(user.dob.substr(0, 4))+(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(5, 2))-Number(user.dob.substr(5, 2)))/12+(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(8, 2))-Number(user.dob.substr(8, 2)))/(30*12)).toFixed(0);
     const count_books_rented = await history_query.count_books_rented(id);
+
     if (count_books_rented>=10) {
       res.status(400).json({
         data: count_books_rented,
@@ -23,7 +24,8 @@ exports.rent_books = async (req, res) => {
       });
     } else {
       const new_book_array = book_array.map((book) => book.book_id);
-      const books_to_be_rented = await book_query.book_to_be_rented(age, new_book_array);
+      const books_to_be_rented = await book_query.book_to_be_rented(Number(age), new_book_array);
+
       const avaiable_books_to_be_rented = [];
       for (let i = 0; i< books_to_be_rented.length; i++) {
         const rented = await history_query.count_books_rented_by_book_id(books_to_be_rented._id);
@@ -31,6 +33,8 @@ exports.rent_books = async (req, res) => {
           avaiable_books_to_be_rented.push(books_to_be_rented[i]);
         }
       }
+
+
       const rent_books_array = [];
       for (let i = 0; i< (10-count_books_rented) && i< avaiable_books_to_be_rented.length; i++) {
         rent_books_array.push(
@@ -45,15 +49,53 @@ exports.rent_books = async (req, res) => {
         );
       }
       const rent_books = await history_query.rent_books(rent_books_array);
+
       res.status(200).json({
         data: rent_books,
-        message: 'message',
+        message: 'Books rented to you',
       });
     }
   } catch (err) {
     res.status(400).json({
       data: null,
       message: 'Error while renting',
+    });
+  }
+};
+
+exports.return_books = async (req, res) => {
+  try {
+    const book_array = req.body.book;
+    const token = req.headers.authorization.split(' ')[1];
+    const payload = jwt.verify(token, process.env.mysecretkey);
+    const user_email = payload.user_email;
+    const user = await user_query.find_user(user_email);
+    const id = user._id;
+    console.log(user);
+    if (!user) {
+      res.status(400).json({
+        data: null,
+        message: 'User not found',
+      });
+    } else {
+      const new_book_array = book_array.map((book) => book.book_id);
+      const return_books = await history_query.return_books(id, new_book_array);
+      console.log(return_books);
+      // if (return_books) {
+      //   console.log(return_books);
+      // } else {
+      //   ;
+      // }
+      res.status(200).json({
+        data: return_books,
+        message: 'Books returned',
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      data: null,
+      message: 'Not able to return books',
     });
   }
 };
@@ -77,7 +119,7 @@ exports.amount_spent = async (req, res) => {
       const last_date = today.setDate(today.getDate()-100);
       const amount = await history_query.amount_spent(user._id, last_date);
       const user_spent = amount[0].total;
-      console.log(amount);
+
       res.status(200).json({
         data: user_spent,
         message: 'Amount spent by user in last 100 days',
@@ -89,7 +131,6 @@ exports.amount_spent = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.status(400).json({
       data: null,
       message: 'Error calculating amount',
@@ -100,15 +141,58 @@ exports.amount_spent = async (req, res) => {
 exports.rented_books = async (req, res) => {
   try {
     const rented_books = await history_query.find_all_rented_books();
-    console.log(rented_books);
     res.status(200).json({
       data: rented_books,
-      message: 'Rented Book Ids',
+      message: 'Rented Book Ids and their copies',
     });
   } catch (err) {
     res.status(400).json({
       data: null,
       message: 'Error while finding rented books',
+    });
+  }
+};
+
+exports.rented_books_to_user = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const payload = jwt.verify(token, process.env.mysecretkey);
+    const user_email = payload.user_email;
+    const user_is_admin = payload.user_is_admin;
+    const email = req.body.email;
+    if ((user_is_admin) || (email === user_email)) {
+      const user = await user_query.find_user(user_email);
+      if (!user) {
+        res.status(404).json({
+          data: null,
+          message: 'User not found',
+        });
+      }
+      const id = user._id;
+
+
+      const rented_books_to_user = await history_query.rented_books_to_user(id);
+      if (rented_books_to_user.length) {
+        res.status(200).json({
+          data: rented_books_to_user,
+          message: 'Books rented to the user',
+        });
+      } else {
+        res.status(400).json({
+          data: [],
+          message: 'No rented books to user found',
+        });
+      }
+    } else {
+      res.status(403).json({
+        data: null,
+        message: 'Forbidden: Access is denied',
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      data: null,
+      message: 'Error while getting rented books to the user',
     });
   }
 };

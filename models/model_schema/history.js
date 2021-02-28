@@ -28,6 +28,8 @@ const history_schema= new mongoose.Schema({
   },
 });
 
-history_schema.index({user_id: 1, book_id: 1, date: -1});
+history_schema.index({user_id: 1});
+history_schema.index({book_id: 1});
+history_schema.index({date: -1});
 
 module.exports = mongoose.model('history', history_schema);

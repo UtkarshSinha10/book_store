@@ -414,7 +414,7 @@ error_code:440,
 ---------------------------------------------------------------------------------
 
 6. Total rented book by particular user
-API- localhost:3000/user/booksrent 
+API- localhost:3000/history/bookstouser
 Method- GET
 
 JWT token in headers.
