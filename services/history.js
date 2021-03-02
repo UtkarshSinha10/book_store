@@ -14,7 +14,10 @@ exports.rent_books = async (req, res) => {
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
-    const age = parseFloat(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(0, 4))-Number(user.dob.substr(0, 4))+(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(5, 2))-Number(user.dob.substr(5, 2)))/12+(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(8, 2))-Number(user.dob.substr(8, 2)))/(30*12)).toFixed(0);
+    // const current_date= new Date();
+    // const age = (current_date.getYear()-user.dob.getYear())+(current_date.getMonth()-user.dob.getMonth())/12+(current_date.getDay()-user.dob.getDay())/(12*30);
+    // console.log(age);
+    // parseFloat(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(0, 4))-Number(user.dob.substr(0, 4))+(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(5, 2))-Number(user.dob.substr(5, 2)))/12+(Number(dateFormat(new Date(), 'yyyy-mm-dd').substr(8, 2))-Number(user.dob.substr(8, 2)))/(30*12)).toFixed(0);
     const count_books_rented = await history_query.count_books_rented(id);
 
     if (count_books_rented>=10) {
@@ -24,18 +27,27 @@ exports.rent_books = async (req, res) => {
       });
     } else {
       const new_book_array = book_array.map((book) => book.book_id);
-      const books_to_be_rented = await book_query.book_to_be_rented(Number(age), new_book_array);
-
+      // console.log(new_book_array);
+      const books_to_be_rented = await book_query.book_to_be_rented(1, new_book_array);
+      // console.log(books_to_be_rented);
       const avaiable_books_to_be_rented = [];
       for (let i = 0; i< books_to_be_rented.length; i++) {
-        const rented = await history_query.count_books_rented_by_book_id(books_to_be_rented._id);
+        const rented = await history_query.count_books_rented_by_book_id(books_to_be_rented[i].id);
+        // console.log(rented);
         if (books_to_be_rented[i].copies - rented >0) {
           avaiable_books_to_be_rented.push(books_to_be_rented[i]);
         }
       }
 
-
+      // console.log(avaiable_books_to_be_rented);
       const rent_books_array = [];
+      // console.log(avaiable_books_to_be_rented);
+      if ( avaiable_books_to_be_rented.length ==0 ) {
+        return res.status(200).json({
+          data: [],
+          message: 'Books are not either availabe or already rented to you',
+        });
+      }
       for (let i = 0; i< (10-count_books_rented) && i< avaiable_books_to_be_rented.length; i++) {
         rent_books_array.push(
             {
@@ -56,6 +68,7 @@ exports.rent_books = async (req, res) => {
       });
     }
   } catch (err) {
+    // console.log(err);
     res.status(400).json({
       data: null,
       message: 'Error while renting',
@@ -71,7 +84,7 @@ exports.return_books = async (req, res) => {
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
-    console.log(user);
+    // console.log(user);
     if (!user) {
       res.status(400).json({
         data: null,
@@ -80,7 +93,7 @@ exports.return_books = async (req, res) => {
     } else {
       const new_book_array = book_array.map((book) => book.book_id);
       const return_books = await history_query.return_books(id, new_book_array);
-      console.log(return_books);
+      // console.log(return_books);
       // if (return_books) {
       //   console.log(return_books);
       // } else {
@@ -92,7 +105,7 @@ exports.return_books = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(400).json({
       data: null,
       message: 'Not able to return books',

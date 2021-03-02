@@ -31,7 +31,7 @@ exports.new_book_schema = Joi.object().keys({
   pages: Joi.number().min(1).required(),
   author: Joi.string().min(3).max(30).required(),
   genre: Joi.string().min(3).max(30).required(),
-  age_rated: Joi.number().min(12).required(),
+  age_rated: Joi.number().min(0).required(),
   copies: Joi.number().min(1).required(),
 
 });

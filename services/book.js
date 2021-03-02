@@ -138,7 +138,7 @@ exports.current_books = async (req, res) => {
 exports.books_by_genre = async (req, res) => {
   try {
     const genre = req.query.genre;
-    const skip = req.query.skip;
+    const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_genre(genre, skip, limit);
     if (book_list) {
