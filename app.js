@@ -1,22 +1,18 @@
 const express = require('express');
 const body_parser = require('body-parser');
 const dotenv = require('dotenv');
-const mongoose = require('mongoose');
 const user_routes = require('./routes/user');
 const book_routes = require('./routes/book');
 const history_routes = require('./routes/history');
 
+try {
+  // eslint-disable-next-line no-unused-vars
+  const dbconnect = require('./models/databaseconnect');
+} catch (err) {
+  process.exit(500);
+}
+
 dotenv.config();
-
-mongoose.connect('mongodb://localhost:27017/assignment', {useUnifiedTopology: true, useNewUrlParser: true}, (error)=>{
-  if ( error ) {
-    console.log('Error while connecting db');
-  } else {
-    console.log('db connected');
-  }
-});
-
-mongoose.set('useFindAndModify', false);
 
 const app = express();
 
@@ -30,5 +26,8 @@ app.get('/', (req, res)=>{
 app.use('/user', user_routes);
 app.use('/book', book_routes);
 app.use('/history', history_routes);
+app.all('/*', (req, res) => {
+  res.send('hi');
+});
 
 module.exports = app;

@@ -4,17 +4,15 @@ const dateFormat = require('dateformat');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const {response} = require('../response/response');
+const {Not_found_error, Credential_error, Duplication_error, Server_failure_error} = require('../errors/errors');
 
 exports.login = async (req, res) => {
   try {
     const user = await user_query.find_user(req.body.email);
     if (!user) {
-      return res.status(404).json({
-        data: null,
-        message: 'User not found',
-      });
+      throw new Not_found_error('User not found');
     }
-
     // eslint-disable-next-line max-len
     const password_matching = await bcrypt.compare( req.body.password, user.password);
 
@@ -24,21 +22,12 @@ exports.login = async (req, res) => {
         user_is_admin: user.is_admin,
       }, process.env.mysecretkey, {expiresIn: '10h'});
 
-      return res.status(200).json({
-        data: token,
-        message: 'Logged in',
-      });
+      return response(null, token, 'Logged In', res);
     } else {
-      return res.status(401).json({
-        data: null,
-        message: 'Wrong credentials',
-      });
+      throw new Credential_error('Wrong Credentials');
     }
-  } catch (error) {
-    return res.status(400).json({
-      data: null,
-      message: 'Some error occured',
-    });
+  } catch (err) {
+    return response(err, null, err.message, res);
   }
 };
 
@@ -46,18 +35,12 @@ exports.register = async (req, res) => {
   try {
     const user = await user_query.find_user(req.body.email);
     if (user) {
-      return res.status(409).json({
-        data: null,
-        message: 'User already exists',
-      });
+      throw new Duplication_error('User already exists');
     }
 
     bcrypt.hash(req.body.password, 10, async (err, hash_password) => {
       if (err) {
-        return res.status(500).json({
-          data: null,
-          message: 'Error occured while password encrption',
-        });
+        throw new Server_failure_error('Error in password encryption');
       } else {
         const new_user = req.body;
         new_user.password = hash_password;
@@ -72,23 +55,14 @@ exports.register = async (req, res) => {
         }, process.env.mysecretkey, {expiresIn: '1h'});
 
         if (registered) {
-          return res.status(200).json({
-            data: token,
-            message: 'User registration completed',
-          });
+          return response(null, token, 'User registration completed', res);
         } else {
-          return res.status(500).json({
-            data: null,
-            message: 'Registration denied',
-          });
+          throw new Server_failure_error('Registration denied');
         }
       }
     });
   } catch (err) {
-    return res.status(500).json({
-      data: null,
-      message: 'Not able to register',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -101,27 +75,15 @@ exports.new_admin = async (req, res) => {
     if ( user_is_admin ) {
       const admin = await user_query.update_is_admin(req.body.email);
       if (admin) {
-        return res.status(200).json({
-          data: admin,
-          message: 'Admin privileges granted',
-        });
+        return response(null, admin, 'Admin privileges granted');
       } else {
-        return res.status(400).json({
-          data: null,
-          message: 'User not found',
-        });
+        throw new Not_found_error('User not found');
       }
     } else {
-      return res.status(403).json({
-        data: null,
-        message: 'Forbidden: Access is denied',
-      });
+      throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return res.status(500).json({
-      data: null,
-      message: 'Not able to provide privileges',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -132,21 +94,11 @@ exports.get_all_users = async (req, res) => {
 
     const users = await user_query.find_all_users(skip, limit);
     if (users) {
-      res.status(200).json({
-        data: users,
-        message: 'Registered users',
-      });
+      return response(null, users, 'Registered users', res);
     } else {
-      return res.status(200).json({
-        data: null,
-        message: 'No user exists',
-      });
+      return response(null, [], 'No user registered', res);
     }
   } catch (err) {
-    return res.status(500).json({
-      data: null,
-      message: 'Not able to get users',
-    });
+    return response(err, null, err.message, res);
   }
 };
-

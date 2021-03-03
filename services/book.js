@@ -3,6 +3,8 @@ const book_query = require('../models/model_query/book_query');
 const history_query = require('../models/model_query/history_query');
 const jwt = require('jsonwebtoken');
 const dateFormat = require('dateformat');
+const {response} = require('../response/response');
+const {Not_found_error, Database_operation_error, Duplication_error} = require('../errors/errors');
 
 exports.new_book = async (req, res) => {
   try {
@@ -17,33 +19,18 @@ exports.new_book = async (req, res) => {
       const found_book = await book_query.find_a_book_by_name(new_book.name);
 
       if (found_book) {
-        return res.status(409).json({
-          data: null,
-          message: 'Book already exist',
-        });
+        throw new Duplication_error('Book already exists');
       }
       const book = await book_query.create_new_book(new_book);
       if (!book) {
-        return res.status(400).json({
-          data: null,
-          message: 'Error while adding new book',
-        });
+        throw new Database_operation_error('Book not added');
       }
-      return res.status(200).json({
-        data: book.ops[0],
-        message: 'Done',
-      });
+      return response(null, books.ops[0], 'Book added', res);
     } else {
-      return res.status(403).json({
-        data: null,
-        message: 'Forbidden: Access is denied',
-      });
+      return new Access_denial_error('Forbideden: Access is denies');
     }
   } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while adding a new book',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -56,10 +43,7 @@ exports.update_book = async (req, res) => {
     if (user_is_admin) {
       const found_book = await book_query.find_a_book_by_id(req.body.book_id);
       if (!found_book) {
-        return res.status(404).json({
-          data: null,
-          message: 'Book not found',
-        });
+        throw new Not_found_error('Book not found');
       } else {
         const new_book = {};
         if (req.body.copies) {
@@ -73,27 +57,15 @@ exports.update_book = async (req, res) => {
         }
         const update_book = await book_query.update_book(req.body.book_id, new_book);
         if (!update_book) {
-          return res.status().json({
-            data: null,
-            message: 'Updation failed',
-          });
+          throw new Database_operation_error('Updation failed');
         }
-        return res.status(200).json({
-          data: update_book,
-          message: 'Updation successful',
-        });
+        return response(null, update_book, 'Updation successful', res);
       }
     } else {
-      return res.status(403).json({
-        data: null,
-        message: 'Forbidden: Access is denied',
-      });
+      throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while updating copies of book',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -123,15 +95,9 @@ exports.current_books = async (req, res) => {
         });
       }
     }
-    res.status(200).json({
-      data: books_array,
-      message: 'Books present details',
-    });
+    return response(null, books_array, 'Books present details', res);
   } catch (err) {
-    res.status(400).json({
-      data: null,
-      message: 'Not able to get current books',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -142,21 +108,12 @@ exports.books_by_genre = async (req, res) => {
     const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_genre(genre, skip, limit);
     if (book_list) {
-      return res.status(200).json({
-        data: book_list,
-        message: 'Search by genre successful',
-      });
+      return response(null, boo_list, 'Search by genre successful', res);
     } else {
-      return res.status(200).json({
-        data: [],
-        message: 'No books belong to the given genre',
-      });
+      return response(null, [], 'No books in given genre', res);
     }
   } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while searching books by genre',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -167,21 +124,12 @@ exports.books_by_author = async (req, res) => {
     const limit = req.query.limit;
     const book_list = await book_query.books_by_author(author, skip, limit);
     if (book_list.length>0) {
-      return res.status(200).json({
-        data: book_list,
-        message: 'Search by author successful',
-      });
+      return response(null, book_list, 'Search by author successful', res);
     } else {
-      return res.status(200).json({
-        data: [],
-        message: 'No books written by given author',
-      });
+      return response(null, [], 'No books by given author', res);
     }
   } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while searching books by author',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -194,21 +142,12 @@ exports.remove_books = async (req, res) => {
       const book_array = req.body.book;
       const new_book_array = book_array.map((book) => book.book_id);
       const book_modification_details = await book_query.remove_book(new_book_array);
-      return res.status(200).json({
-        data: `Books removed ${book_modification_details.nModified}`,
-        message: 'Book removed',
-      });
+      return response(null, book_modification_details, 'Books removed', res);
     } else {
-      return res.status(403).json({
-        data: null,
-        message: 'Forbidden: Access is denied',
-      });
+      throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while removing a book',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -219,21 +158,12 @@ exports.books_by_author_match = async (req, res) => {
     const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_author_match(author, skip, limit);
     if (book_list.length>0) {
-      return res.status(200).json({
-        data: book_list,
-        message: 'Search by matching author\'s name successful',
-      });
+      return response(null, book_list, 'Search by matching author\'s name successful', res);
     } else {
-      return res.status(200).json({
-        data: [],
-        message: 'No books written by given matching author\'s name',
-      });
+      return response(null, [], 'No books written by given matching author\'s name', res);
     }
   } catch (err) {
-    return res.status(400).json({
-      data: null,
-      message: 'Error while searching books',
-    });
+    return response(err, null, err.message, res);
   }
 };
 
@@ -250,33 +180,18 @@ exports.book_by_earliest_date = async (req, res) => {
             const history = await history_query.find_earliest_date(book_id);
             const rent_date = new Date(history[0].rent_date);
             const available_date = dateFormat(new Date(rent_date.setDate(rent_date.getDate()+14)), 'yyyy-mm-dd');
-            res.status(200).json({
-              data: available_date,
-              message: 'Book will be earrliest avialble on given date',
-            });
+            return response(null, available_date, 'Book will be earrliest avialble on given date', res);
           }
         } else {
-          res.status(200).json({
-            data: dateFormat(new Date()),
-            message: 'Book is available to issue',
-          });
+          return response(null, dataFormat(new Date()), 'Book is available to issue', res);
         }
       } else {
-        res.status(200).json({
-          data: null,
-          message: 'Book removed from the store',
-        });
+        return response(null, [], 'Book removed from the store', res);
       }
     } else {
-      res.status(404).json({
-        data: null,
-        message: 'Book not found',
-      });
+      throw new Not_found_error('Book not found');
     }
   } catch (err) {
-    res.status(400).json({
-      data: null,
-      message: 'Error while getting date',
-    });
+    return response(err, null, err.message, res);
   }
 };

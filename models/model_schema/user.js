@@ -31,5 +31,4 @@ const user_schema= new mongoose.Schema({
 user_schema.index({email: 1});
 user_schema.index({name: 1});
 user_schema.index({is_admin: 1});
-// user_schema.index({email: 1, name: 1, is_admin: 1}, {unique: true});
 module.exports = mongoose.model('user', user_schema);

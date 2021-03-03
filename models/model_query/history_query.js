@@ -3,13 +3,14 @@
 const Mongoose = require('mongoose');
 const History = require('../model_schema/history');
 const dateFormat = require('dateformat');
+const {Database_operation_error} = require('../../errors/errors');
 
 exports.count_books_rented = async (id) => {
   try {
     const count = await History.countDocuments({'$and': [{user_id: id}, {is_returned: true}]});
     return count;
   } catch (err) {
-    throw (err);
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -18,7 +19,7 @@ exports.rent_books = async (rent_books_array) => {
     const rent_books = await History.insertMany(rent_books_array);
     return rent_books;
   } catch (err) {
-    throw (err);
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -30,7 +31,7 @@ exports.return_books = async (id, return_books_array) => {
     // console.log(return_books);
     return return_books;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -39,7 +40,7 @@ exports.count_books_rented_by_book_id = async (id) => {
     const count = History.countDocuments({'$and': [{book_id: id}, {is_returned: false}]});
     return count;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -50,7 +51,7 @@ exports.amount_spent = async (id, last_date) => {
     const amount = await History.aggregate([{'$match': {user_id: Mongoose.ObjectId(id), rent_date: {'$gte': date}}}, {'$group': {_id: null, total: {'$sum': '$book_price'}}}]);
     return amount;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -59,7 +60,7 @@ exports.find_all_rented_books = async () => {
     const rented_books = await History.aggregate([{'$match': {is_returned: false}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
     return rented_books;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -68,7 +69,7 @@ exports.rented_books_to_user = async (id) => {
     const rented_books_to_user = await History.find({book_id: id, is_returned: false});
     return rented_books_to_user;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -78,7 +79,7 @@ exports.rented_copies_of_book = async (id) => {
     // console.log(rented_copies_of_book);
     return rented_copies_of_book;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
@@ -87,7 +88,7 @@ exports.find_earliest_date = async (book_id) => {
     const history = await History.find({book_id: book_id, is_returned: false}).sort({rent_date: 1}).limit(1);
     return history;
   } catch (err) {
-    throw err;
+    throw new Database_operation_error('Database operation failed');
   }
 };
 
