@@ -7,6 +7,14 @@ const jwt = require('jsonwebtoken');
 const {response} = require('../response/response');
 const {Not_found_error, Access_denial_error, Limit_exceeded_error} = require('../errors/errors');
 
+/**
+ * Rent books function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Limit_exceeded_error
+ */
 exports.rent_books = async (req, res) => {
   try {
     const book_array = req.body.book;
@@ -54,6 +62,14 @@ exports.rent_books = async (req, res) => {
   }
 };
 
+/**
+ * Return books function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Not_found_error.
+ */
 exports.return_books = async (req, res) => {
   try {
     const book_array = req.body.book;
@@ -74,6 +90,15 @@ exports.return_books = async (req, res) => {
   }
 };
 
+/**
+ * Amount spent in 100 days function  function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Not_found_error.
+ * @throws Access_denial_error.
+ */
 exports.amount_spent = async (req, res) => {
   try {
     const email = req.body.email;
@@ -100,6 +125,13 @@ exports.amount_spent = async (req, res) => {
   }
 };
 
+/**
+ * Rented books function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ */
 exports.rented_books = async (req, res) => {
   try {
     const rented_books = await history_query.find_all_rented_books();
@@ -109,6 +141,15 @@ exports.rented_books = async (req, res) => {
   }
 };
 
+/**
+ * Books rented to a user function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Not_found_error.
+ * @throws Access_denial_error.
+ */
 exports.rented_books_to_user = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];

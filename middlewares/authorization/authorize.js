@@ -1,30 +1,33 @@
 const JWT = require('jsonwebtoken');
+const {Authentication_error} = require('../../errors/errors');
+const {response} = require('../../response/response');
 
 
-exports.authorization = ( req, res, next )=>{
+/**
+ * Authorization function
+ * @param {*} req The request.
+ * @param {*} res The response.
+ * @param {*} next The next.
+ * @return {*} Return to response.js
+ */
+function authorization( req, res, next ) {
   try {
     if (!req.headers || !req.headers.authorization) {
-      return res.status(403).json({
-        data: null,
-        message: 'No Authentication Key',
-      });
+      throw new Authentication_error('No Authentication Key');
     }
     const token = req.headers.authorization.split(' ')[1];
     const verified = JWT.verify(token, process.env.mysecretkey);
     if ( verified ) {
       next();
     } else {
-      return res.status(401).json({
-        data: null,
-        message: 'Unauthorized',
-      });
+      throw new Authentication_error('Unauthorized Key');
     }
   } catch (err) {
     if (err instanceof JWT.TokenExpiredError) {
-      return res.status(440).json({
-        data: null,
-        message: 'Token expired, login timout',
-      });
+      return response(err, null, 'Token expired, login timout', res);
     }
+    return response(err, null, err.message, res);
   }
 };
+
+module.exports.authorization = authorization;

@@ -7,6 +7,15 @@ const bcrypt = require('bcrypt');
 const {response} = require('../response/response');
 const {Not_found_error, Credential_error, Duplication_error, Server_failure_error} = require('../errors/errors');
 
+/**
+ * Login.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Credential_error
+ * @throws Not_found_error
+ */
 exports.login = async (req, res) => {
   try {
     const user = await user_query.find_user(req.body.email);
@@ -31,6 +40,15 @@ exports.login = async (req, res) => {
   }
 };
 
+/**
+ * Registration.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Duplication_error
+ * @throws Server_failure_error
+ */
 exports.register = async (req, res) => {
   try {
     const user = await user_query.find_user(req.body.email);
@@ -66,6 +84,15 @@ exports.register = async (req, res) => {
   }
 };
 
+/**
+ * New Admin.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Not_found_error
+ * @throws Access_denial_error
+ */
 exports.new_admin = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
@@ -87,6 +114,13 @@ exports.new_admin = async (req, res) => {
   }
 };
 
+/**
+ * All users.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ */
 exports.get_all_users = async (req, res) => {
   try {
     const skip = Number(req.query.skip);

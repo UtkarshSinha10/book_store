@@ -126,6 +126,23 @@ class Limit_exceeded_error extends Error {
   }
 }
 
+/**
+ * Authentication Error.
+ */
+class Authentication_error extends Error {
+  /**
+   * @constructor
+   * @param {string} message The error message.
+   */
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+    this.code = 400;
+    this.message = message;
+  }
+}
+
+
 module.exports = {
   Not_found_error,
   Credential_error,

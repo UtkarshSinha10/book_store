@@ -7,7 +7,7 @@
  */
 function response(err, result, message, res) {
   if (err) {
-    res.status(400).json({
+    res.status(err.code).json({
       data: null,
       message: message,
     });
@@ -19,4 +19,4 @@ function response(err, result, message, res) {
   }
 };
 
-module.exports.response =response;
+module.exports.response = response;

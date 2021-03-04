@@ -1,24 +1,36 @@
-// const mongoose = require('mongoose');
-// const User = require('../models/model_schema/user');
-const request = require('supertest');
-const user_routes = require('../routes/user');
-// const app = require('../app');
-// const express = require('express');
-// const jest = require('jest');
+/* eslint-disable max-len */
+const app = require('../app');
+const supertest = require('supertest');
+const request = supertest(app);
 
-// mongoose.connect('mongodb://localhost:27017/test_assignment', {useUnifiedTopology: true, useNewUrlParser: true}, (error)=>{
-//   if ( error ) {
-//     console.log('Error while connecting db');
-//   } else {
-//     console.log('db connected');
-//   }
-// });
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoidXRrYXJzaHNpbmhhQGluZHVzb3MuY29tIiwidXNlcl9pc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNjE0Nzc0Nzc0LCJleHAiOjE2MTQ4MTA3NzR9.IIyS5hbYlr7Q8GS0skq5FZXhlQY77-koZjxsP2LNxmg';
 
-describe('Testing user/all api', function() {
-  it('users', function(done) {
-    // eslint-disable-next-line new-cap
-    //  const body = await request(user_routes).get('/all/?skip=0&limit=1');
-    // expect(true).toEqual(true);
-    request(user_routes).get('/all').expect(200);
+describe('GET all users', () => {
+  it('200 on successful retrieval', () => {
+    return request.get('/user/all')
+        .set('Authorization', `Bearer ${token}`)
+        .then( (response) => {
+          expect(response.statusCode).toBe(200);
+        });
   });
 });
+
+// describe('My API tests', function() {
+//   let token = null;
+
+//   before(function(done) {
+//     request(url)
+//         .post('/user/token')
+//         .send({_id: user1._id, password: user1.password})
+//         .end(function(err, res) {
+//           token = res.body.token; // Or something
+//           done();
+//         });
+//   });
+
+//   it('should get a valid token for user: user1', function(done) {
+//     request('/get/user')
+//         .set('Authorization', 'Bearer ' + token)
+//         .expect(200, done);
+//   });
+// });

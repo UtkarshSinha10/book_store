@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+/**
+ * Book Schema
+ */
 const book_schema = new mongoose.Schema({
 
   name: {

@@ -2,6 +2,13 @@
 const Book = require('../model_schema/book');
 const {Database_operation_error} = require('../../errors/errors');
 
+/**
+ * Find book by book name.
+ * @async
+ * @param {string} name The book name.
+ * @return {Object} Book document.
+ * @throws Database_operation_error
+ */
 exports.find_a_book_by_name = async (name) => {
   try {
     const found_book = await Book.findOne({name: name});
@@ -11,6 +18,13 @@ exports.find_a_book_by_name = async (name) => {
   }
 };
 
+/**
+ * Find a book using book id.
+ * @async
+ * @param {id} id The book id.
+ * @return {*} Book document.
+ * @throws Database_operation_error
+ */
 exports.find_a_book_by_id = async (id) => {
   try {
     const found_book = await Book.findOne({_id: id});
@@ -20,6 +34,13 @@ exports.find_a_book_by_id = async (id) => {
   }
 };
 
+/**
+ * Remove book from database.
+ * @async
+ * @param {id} id The book id.
+ * @throws Database_operation_error.
+ * @return {*} Mongoose update object.
+ */
 exports.remove_book = async (id) => {
   try {
     const found_books = await Book.updateMany({_id: {'$in': id}}, {is_discarded: true});
@@ -29,6 +50,13 @@ exports.remove_book = async (id) => {
   }
 };
 
+/**
+ * Creates a new book.
+ * @async
+ * @param {id} new_book The new book object.
+ * @throws Database_operation_error
+ * @return {*} Mongoose inserted object.
+ */
 exports.create_new_book = async (new_book) => {
   try {
     const new_book_entry = await Book.collection.insertOne(new_book);
@@ -38,6 +66,14 @@ exports.create_new_book = async (new_book) => {
   }
 };
 
+/**
+ * Update book field.
+ * @async
+ * @param {id} id The book id.
+ * @param {*} updated_body The book updation body.
+ * @return {*} Mongoose update object.
+ * @throws Database_operation_error.
+ */
 exports.update_book= async (id, updated_body) => {
   try {
     // eslint-disable-next-line new-cap
@@ -48,6 +84,12 @@ exports.update_book= async (id, updated_body) => {
   }
 };
 
+/**
+ * Total books present in database.
+ * @async
+ * @return {*} Total books present in database.
+ * @throws Database_operation_error
+ */
 exports.count_total_books = async () => {
   try {
     const total_books = await Book.aggregate({
@@ -63,6 +105,15 @@ exports.count_total_books = async () => {
   }
 };
 
+/**
+ * Books by genre.
+ * @async
+ * @param {String} genre The genre of book.
+ * @param {Number} skip The number of document to skip.
+ * @param {Number} limit The number of document to return..
+ * @return {*} Books of particular genre.
+ * @throws Database_operation_error.
+ */
 exports.books_by_genre = async (genre, skip, limit) => {
   try {
     const books_by_genre = await Book.find({genre: genre}).select('id name price published author').skip(skip).limit(limit);
@@ -72,6 +123,14 @@ exports.books_by_genre = async (genre, skip, limit) => {
   }
 };
 
+/**
+ * Books in store.
+ * @async
+ * @param {Number} skip The number of document to skip.
+ * @param {Number} limit The number of document to return..
+ * @return {*} Books in database.
+ * @throws Database_operation_error.
+ */
 exports.books_registered_in_store = async (skip, limit) => {
   try {
     const books_registered_in_store = await Book.find().select('id name copies').skip(skip).limit(limit);
@@ -81,6 +140,15 @@ exports.books_registered_in_store = async (skip, limit) => {
   }
 };
 
+/**
+ * Books by author name.
+ * @async
+ * @param {String} author The author of book.
+ * @param {Number} skip The number of document to skip.
+ * @param {Number} limit The number of document to return..
+ * @return {*} Books by particular author.
+ * @throws Database_operation_error.
+ */
 exports.books_by_author = async (author, skip, limit) => {
   try {
     const books_by_author = await Book.find({author: author}).select('id name price published').skip(skip).limit(limit);
@@ -90,6 +158,15 @@ exports.books_by_author = async (author, skip, limit) => {
   }
 };
 
+/**
+ * Books by author's name match.
+ * @async
+ * @param {String} author The author's partial or half name.
+ * @param {Number} skip The number of document to skip.
+ * @param {Number} limit The number of document to return..
+ * @return {*} Books by auhtor's name match.
+ * @throws Database_operation_error.
+ */
 exports.books_by_author_match= async (author, skip, limit) => {
   try {
     const book_list = await Book.find({'$text': {'$search': author}}).skip(skip).limit(limit);
@@ -99,6 +176,14 @@ exports.books_by_author_match= async (author, skip, limit) => {
   }
 };
 
+/**
+ * Books that can be rented
+ * @async
+ * @param {*} age The age for age appropriation
+ * @param {*} book_id_array Array of book ids.
+ * @return {*} Books that can be rented.
+ * @throws Database_operation_error.
+ */
 exports.book_to_be_rented = async (age, book_id_array) => {
   try {
     const book_list = await Book.find({'$and': [{_id: {'$in': book_id_array}}, {is_discarded: false}, {age_rated: {'$gte': age}}]});

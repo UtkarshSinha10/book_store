@@ -1,12 +1,16 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const body_parser = require('body-parser');
 const dotenv = require('dotenv');
 const user_routes = require('./routes/user');
 const book_routes = require('./routes/book');
 const history_routes = require('./routes/history');
+const {response} = require('./response/response');
 
 try {
-  // eslint-disable-next-line no-unused-vars
+  /**
+   * Importing module to connect mongo database.
+   */
   const dbconnect = require('./models/databaseconnect');
 } catch (err) {
   process.exit(500);
@@ -18,16 +22,24 @@ const app = express();
 
 app.use(body_parser.json());
 
-app.get('/', (req, res)=>{
-  console.log('Welcome greet from Server');
-  res.send('Hi from Server to Client');
+/**
+ * User Routes
+ */
+app.use('/user', user_routes);
+/**
+ * Book Routes
+ */
+app.use('/book', book_routes);
+/**
+ * History Routes
+ */
+app.use('/history', history_routes);
+/**
+ * All other api hits
+ */
+app.all('/*', (req, res) => {
+  return response(null, [], 'Wrong Api Hit', res);
 });
 
-app.use('/user', user_routes);
-app.use('/book', book_routes);
-app.use('/history', history_routes);
-app.all('/*', (req, res) => {
-  res.send('hi');
-});
 
 module.exports = app;

@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+/**
+ * History Schema
+ */
 const history_schema= new mongoose.Schema({
 
   user_id: {

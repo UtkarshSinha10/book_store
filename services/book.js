@@ -4,8 +4,18 @@ const history_query = require('../models/model_query/history_query');
 const jwt = require('jsonwebtoken');
 const dateFormat = require('dateformat');
 const {response} = require('../response/response');
-const {Not_found_error, Database_operation_error, Duplication_error} = require('../errors/errors');
+const {Not_found_error, Database_operation_error, Duplication_error, Access_denial_error} = require('../errors/errors');
 
+/**
+ * Registering new book function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Duplication_error
+ * @throws Database_operation_error
+ * @throws Access_denial_error
+ */
 exports.new_book = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
@@ -27,13 +37,23 @@ exports.new_book = async (req, res) => {
       }
       return response(null, books.ops[0], 'Book added', res);
     } else {
-      return new Access_denial_error('Forbideden: Access is denies');
+      throw new Access_denial_error('Forbideden: Access is denies');
     }
   } catch (err) {
     return response(err, null, err.message, res);
   }
 };
 
+/**
+ * Updating book function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Duplication_error
+ * @throws Database_operation_error
+ * @throws Access_denial_error
+ */
 exports.update_book = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
@@ -69,6 +89,13 @@ exports.update_book = async (req, res) => {
   }
 };
 
+/**
+ * Current books in store function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ */
 exports.current_books = async (req, res) => {
   try {
     const skip = req.query.skip;
@@ -101,6 +128,13 @@ exports.current_books = async (req, res) => {
   }
 };
 
+/**
+ * Books by genre function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ */
 exports.books_by_genre = async (req, res) => {
   try {
     const genre = req.query.genre;
@@ -117,6 +151,13 @@ exports.books_by_genre = async (req, res) => {
   }
 };
 
+/**
+ * Books by author function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ */
 exports.books_by_author = async (req, res) => {
   try {
     const author = req.query.author;
@@ -133,6 +174,14 @@ exports.books_by_author = async (req, res) => {
   }
 };
 
+/**
+ * Book removal function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Access_denial_error
+ */
 exports.remove_books = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
@@ -151,6 +200,13 @@ exports.remove_books = async (req, res) => {
   }
 };
 
+/**
+ * Books by author name matching function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ */
 exports.books_by_author_match = async (req, res) => {
   try {
     const author = req.query.author;
@@ -167,6 +223,15 @@ exports.books_by_author_match = async (req, res) => {
   }
 };
 
+/**
+ * Earliest availability date function.
+ * @async
+ * @param {*} req The HTTP request.
+ * @param {*} res The HTTP response.
+ * @return {*} Sends Response body to response function.
+ * @throws Duplication_error
+ * @throws Not_found_error
+ */
 exports.book_by_earliest_date = async (req, res) => {
   try {
     const book_id = req.query.book_id;
