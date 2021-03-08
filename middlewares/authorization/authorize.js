@@ -23,6 +23,9 @@ function authorization( req, res, next ) {
       throw new Authentication_error('Unauthorized Key');
     }
   } catch (err) {
+    if (err instanceof JWT.JsonWebTokenError) {
+      return response(err, null, 'Invalid Token', res);
+    }
     if (err instanceof JWT.TokenExpiredError) {
       return response(err, null, 'Token expired, login timout', res);
     }

@@ -40,7 +40,6 @@ exports.new_book = async (req, res) => {
       throw new Access_denial_error('Forbideden: Access is denies');
     }
   } catch (err) {
-    console.log(err);
     return response(err, null, err.message, res);
   }
 };

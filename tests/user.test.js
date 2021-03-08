@@ -22,14 +22,25 @@ describe('Post  login user', () => {
         });
   });
 
-  it('4xx and 5xx on failure', () => {
+  it('401 on Credential error', () => {
     return request.post('/user/login')
         .send({
-          'email': 'utkssinha@indusos.com',
-          'password': '14@qwerty',
+          'email': 'utkarshsinha@indusos.com',
+          'password': '1234@qwertyyy',
         })
         .then((response)=>{
-          expect(response.statusCode).toBeGreaterThanOrEqual(400);
+          expect(response.statusCode).toBe(401);
+        });
+  });
+
+  it('404 on Not found error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'utksarhs@dasd.com',
+          'password': '342q14dsa@3hh',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(404);
         });
   });
 });
@@ -43,26 +54,57 @@ describe('GET all users', () => {
         });
   });
 
-  it('4xx and 5xx on failure', () => {
+  it('500 on invalid token, Authentication error', () => {
     return request.get('/user/all')
-        .set('Authorization', `Bearer y ${token}`)
+        .set('Authorization', `Bearer y${token}`)
         .then((response) => {
-          expect(response.statusCode).toBeGreaterThanOrEqual(400);
+          expect(response.statusCode).toBe(500);
+        });
+  });
+
+  it('400 on missing token, Authentication error', () => {
+    return request.get('/user/all')
+        .then((response) => {
+          expect(response.statusCode).toBe(400);
         });
   });
 });
 
-// describe('Post Register new user', () => {
-//   it('200 on successful login', () => {
-//     return request.post('/user/register')
-//         .send({
-//           'name': 'Prafull Sinha',
-//           'email': 'prafullsinha@indusos.com',
-//           'password': '1234@qwerty',
-//           'dob': '1991-06-24',
-//         })
-//         .then((response)=>{
-//           expect(response.statusCode).toBe(200);
-//         });
-//   });
-// });
+describe('Post Register new user', () => {
+  // it('200 on successful registration', () => {
+  //   return request.post('/user/register')
+  //       .send({
+  //         'name': 'Prafull Sinha',
+  //         'email': 'prafullsinha@indusos.com',
+  //         'password': '1234@qwerty',
+  //         'dob': '1991-06-24',
+  //       })
+  //       .then((response)=>{
+  //         expect(response.statusCode).toBe(200);
+  //       });
+  // });
+  it('409 on Duplication error', () => {
+    return request.post('/user/register')
+        .send({
+          'name': 'Prafull Sinha',
+          'email': 'prafullsinha@indusos.com',
+          'password': '1234@qwerty',
+          'dob': '1991-06-24',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(409);
+        });
+  });
+  it('500 on Validation error', () => {
+    return request.post('/user/register')
+        .send({
+          'tame': 'Prafull Sinha',
+          'mail': 'prafullsinha@indusos.com',
+          'password': '1234@qwerty',
+          'dob': '1991-06-24',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(500);
+        });
+  });
+});

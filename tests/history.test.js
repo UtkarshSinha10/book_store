@@ -9,7 +9,9 @@ beforeAll((done) => {
 });
 
 let token;
-describe('Post  login user', () => {
+let token2;
+
+describe('Post login admin user', () => {
   it('200 on successful login', () => {
     return request.post('/user/login')
         .send({
@@ -21,14 +23,17 @@ describe('Post  login user', () => {
           expect(response.statusCode).toBe(200);
         });
   });
-  it('4xx and 5xx on failure', () => {
+});
+describe('Post login user', () => {
+  it('200 on successful login', () => {
     return request.post('/user/login')
         .send({
-          'email': 'utkarsnha@indusos.com',
-          'password': '124@qwerty',
+          'email': 'rahulsinha@indusos.com',
+          'password': '1234@qwerty',
         })
-        .then((response) => {
-          expect(response.statusCode).toBeGreaterThanOrEqual(400);
+        .then((response)=>{
+          token2 = response.body.data;
+          expect(response.statusCode).toBe(200);
         });
   });
 });
@@ -44,14 +49,24 @@ describe('Get amount spent by a user in 100 days', () => {
           expect(response.statusCode).toBe(200);
         });
   });
-  it('4xx and 5xx on failure', () => {
+  it('404 on Not found error', () => {
     return request.get('/history/amountspent')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          'email': 'utkasinha@indusos.com',
+          'email': 'ut44hindiasinha@indusos.com',
         })
         .then((response) => {
-          expect(response.statusCode).toBeGreaterThanOrEqual(400);
+          expect(response.statusCode).toBe(404);
+        });
+  });
+  it('403 on Access denial error', () => {
+    return request.get('/history/amountspent')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({
+          'email': 'utkarshsinha@indusos.com',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(403);
         });
   });
 });
@@ -97,3 +112,15 @@ describe('Get all books rented to a user currently', () =>{
         });
   });
 });
+
+// describe('Rent books to a user', () => {
+//   it('200 on successful renting', () => {
+//     ;
+//   });
+// });
+
+// describe('Return books', () => {
+//   it('200 on successful return', () => {
+//     ;
+//   });
+// });
