@@ -152,4 +152,5 @@ module.exports = {
   Duplication_error,
   Database_operation_error,
   Limit_exceeded_error,
+  Authentication_error,
 };

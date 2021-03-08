@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const express = require('express');
 const body_parser = require('body-parser');
 const dotenv = require('dotenv');
@@ -7,18 +6,10 @@ const book_routes = require('./routes/book');
 const history_routes = require('./routes/history');
 const {response} = require('./response/response');
 
-try {
-  /**
-   * Importing module to connect mongo database.
-   */
-  const dbconnect = require('./models/databaseconnect');
-} catch (err) {
-  process.exit(500);
-}
-
 dotenv.config();
 
 const app = express();
+
 
 app.use(body_parser.json());
 

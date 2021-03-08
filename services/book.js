@@ -35,11 +35,12 @@ exports.new_book = async (req, res) => {
       if (!book) {
         throw new Database_operation_error('Book not added');
       }
-      return response(null, books.ops[0], 'Book added', res);
+      return response(null, book.ops[0], 'Book added', res);
     } else {
       throw new Access_denial_error('Forbideden: Access is denies');
     }
   } catch (err) {
+    console.log(err);
     return response(err, null, err.message, res);
   }
 };
@@ -142,11 +143,12 @@ exports.books_by_genre = async (req, res) => {
     const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_genre(genre, skip, limit);
     if (book_list) {
-      return response(null, boo_list, 'Search by genre successful', res);
+      return response(null, book_list, 'Search by genre successful', res);
     } else {
       return response(null, [], 'No books in given genre', res);
     }
   } catch (err) {
+    console.log(err);
     return response(err, null, err.message, res);
   }
 };
@@ -248,7 +250,7 @@ exports.book_by_earliest_date = async (req, res) => {
             return response(null, available_date, 'Book will be earrliest avialble on given date', res);
           }
         } else {
-          return response(null, dataFormat(new Date()), 'Book is available to issue', res);
+          return response(null, dateFormat(new Date()), 'Book is available to issue', res);
         }
       } else {
         return response(null, [], 'Book removed from the store', res);

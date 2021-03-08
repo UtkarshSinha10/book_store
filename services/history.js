@@ -114,6 +114,9 @@ exports.amount_spent = async (req, res) => {
       const today = new Date();
       const last_date = today.setDate(today.getDate()-100);
       const amount = await history_query.amount_spent(user._id, last_date);
+      if (amount.length === 0) {
+        return response(null, 0, 'Amount spent by user in last 100 days', res);
+      }
       const user_spent = amount[0].total;
 
       return response(null, user_spent, 'Amount spent by user in last 100 days', res);
@@ -121,6 +124,7 @@ exports.amount_spent = async (req, res) => {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
+    // console.log(err);
     return response(err, null, err.message, res);
   }
 };

@@ -85,7 +85,7 @@ exports.amount_spent = async (id, last_date) => {
   try {
     const date = new Date(new Date(null).setSeconds(last_date/1000));
     // eslint-disable-next-line new-cap
-    const amount = await History.aggregate([{'$match': {user_id: Mongoose.ObjectId(id), rent_date: {'$gte': date}}}, {'$group': {_id: null, total: {'$sum': '$book_price'}}}]);
+    const amount = await History.aggregate([{'$match': {'$and': [{user_id: id}, {rent_date: {'$gte': date}}]}}, {'$group': {_id: null, total: {'$sum': '$book_price'}}}]);
     return amount;
   } catch (err) {
     throw new Database_operation_error('Database operation failed');

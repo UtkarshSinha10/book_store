@@ -30,7 +30,6 @@ exports.login = async (req, res) => {
         user_email: user.email,
         user_is_admin: user.is_admin,
       }, process.env.mysecretkey, {expiresIn: '10h'});
-
       return response(null, token, 'Logged In', res);
     } else {
       throw new Credential_error('Wrong Credentials');
@@ -125,7 +124,6 @@ exports.get_all_users = async (req, res) => {
   try {
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
-
     const users = await user_query.find_all_users(skip, limit);
     if (users) {
       return response(null, users, 'Registered users', res);
