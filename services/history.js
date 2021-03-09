@@ -15,7 +15,7 @@ const {Not_found_error, Access_denial_error, Limit_exceeded_error} = require('..
  * @return {*} Sends Response body to response function.
  * @throws Limit_exceeded_error
  */
-exports.rent_books = async (req, res) => {
+async function rent_books(req, res) {
   try {
     const book_array = req.body.book;
     const token = req.headers.authorization.split(' ')[1];
@@ -71,7 +71,7 @@ exports.rent_books = async (req, res) => {
  * @return {*} Sends Response body to response function.
  * @throws Not_found_error.
  */
-exports.return_books = async (req, res) => {
+async function return_books(req, res) {
   try {
     const book_array = req.body.book;
     const token = req.headers.authorization.split(' ')[1];
@@ -100,7 +100,7 @@ exports.return_books = async (req, res) => {
  * @throws Not_found_error.
  * @throws Access_denial_error.
  */
-exports.amount_spent = async (req, res) => {
+async function amount_spent(req, res) {
   try {
     const email = req.body.email;
     const token = req.headers.authorization.split(' ')[1];
@@ -137,7 +137,7 @@ exports.amount_spent = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-exports.rented_books = async (req, res) => {
+async function rented_books(req, res) {
   try {
     const rented_books = await history_query.find_all_rented_books();
     return response(null, rented_books, 'Rented Book Ids and their copies', res);
@@ -155,7 +155,7 @@ exports.rented_books = async (req, res) => {
  * @throws Not_found_error.
  * @throws Access_denial_error.
  */
-exports.rented_books_to_user = async (req, res) => {
+async function rented_books_to_user(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -180,4 +180,12 @@ exports.rented_books_to_user = async (req, res) => {
   } catch (err) {
     return response(err, null, err.message, res);
   }
+};
+
+module.exports = {
+  rent_books,
+  return_books,
+  amount_spent,
+  rented_books,
+  rented_books_to_user,
 };

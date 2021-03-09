@@ -16,7 +16,7 @@ const {Not_found_error, Duplication_error, Access_denial_error} = require('../er
  * @throws Database_operation_error
  * @throws Access_denial_error
  */
-exports.new_book = async (req, res) => {
+async function new_book(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -51,7 +51,7 @@ exports.new_book = async (req, res) => {
  * @throws Database_operation_error
  * @throws Access_denial_error
  */
-exports.update_book = async (req, res) => {
+async function update_book(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -90,7 +90,7 @@ exports.update_book = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-exports.current_books = async (req, res) => {
+async function current_books(req, res) {
   try {
     const skip = req.query.skip;
     const limit = req.query.limit;
@@ -129,7 +129,7 @@ exports.current_books = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-exports.books_by_genre = async (req, res) => {
+async function books_by_genre(req, res) {
   try {
     const genre = req.query.genre;
     const skip = Number(req.query.skip);
@@ -152,7 +152,7 @@ exports.books_by_genre = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-exports.books_by_author = async (req, res) => {
+async function books_by_author(req, res) {
   try {
     const author = req.query.author;
     const skip = req.query.skip;
@@ -176,7 +176,7 @@ exports.books_by_author = async (req, res) => {
  * @return {*} Sends Response body to response function.
  * @throws Access_denial_error
  */
-exports.remove_books = async (req, res) => {
+async function remove_books(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -201,7 +201,7 @@ exports.remove_books = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-exports.books_by_author_match = async (req, res) => {
+async function books_by_author_match(req, res) {
   try {
     const author = req.query.author;
     const skip = Number(req.query.skip);
@@ -226,7 +226,7 @@ exports.books_by_author_match = async (req, res) => {
  * @throws Duplication_error
  * @throws Not_found_error
  */
-exports.book_by_earliest_date = async (req, res) => {
+async function book_by_earliest_date(req, res) {
   try {
     const book_id = req.query.book_id;
     const book = await book_query.find_a_book_by_id(book_id);
@@ -253,4 +253,15 @@ exports.book_by_earliest_date = async (req, res) => {
   } catch (err) {
     return response(err, null, err.message, res);
   }
+};
+
+module.exports = {
+  new_book,
+  update_book,
+  current_books,
+  books_by_genre,
+  books_by_author,
+  remove_books,
+  books_by_author_match,
+  book_by_earliest_date,
 };

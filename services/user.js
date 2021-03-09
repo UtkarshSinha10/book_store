@@ -16,7 +16,7 @@ const {Not_found_error, Credential_error, Duplication_error, Access_denial_error
  * @throws Credential_error
  * @throws Not_found_error
  */
-exports.login = async (req, res) => {
+async function login(req, res) {
   try {
     const user = await user_query.find_user(req.body.email);
     if (!user) {
@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
  * @return {*} Sends Response body to response function.
  * @throws Duplication_error
  */
-exports.register = async (req, res) => {
+async function register(req, res) {
   try {
     const user = await user_query.find_user(req.body.email);
     if (user) {
@@ -84,7 +84,7 @@ exports.register = async (req, res) => {
  * @throws Not_found_error
  * @throws Access_denial_error
  */
-exports.new_admin = async (req, res) => {
+async function new_admin(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -115,7 +115,7 @@ exports.new_admin = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-exports.get_all_users = async (req, res) => {
+async function get_all_users(req, res) {
   try {
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
@@ -128,4 +128,11 @@ exports.get_all_users = async (req, res) => {
   } catch (err) {
     return response(err, null, err.message, res);
   }
+};
+
+module.exports = {
+  login,
+  register,
+  new_admin,
+  get_all_users,
 };
