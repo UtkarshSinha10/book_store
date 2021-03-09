@@ -4,12 +4,13 @@ const supertest = require('supertest');
 const request = supertest(app);
 
 let token;
+
 beforeAll((done) => {
   const dbconnect = require('../models/testdatabaseconnect');
   done();
 });
 
-describe('Post  login user', () => {
+describe('Post login user', () => {
   it('200 on successful login', () => {
     return request.post('/user/login')
         .send({

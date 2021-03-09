@@ -162,7 +162,7 @@ exports.rented_books_to_user = async (req, res) => {
     const user_is_admin = payload.user_is_admin;
     const email = req.body.email;
     if ((user_is_admin) || (email === user_email)) {
-      const user = await user_query.find_user(user_email);
+      const user = await user_query.find_user(req.body.email);
       if (!user) {
         throw new Not_found_error('User not found');
       }

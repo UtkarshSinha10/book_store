@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.26% </span>
+                <span class="strong">59.5% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>71/124</span>
+                <span class='fraction'>72/121</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30.56% </span>
+                <span class="strong">35.29% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>11/36</span>
+                <span class='fraction'>12/34</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.38% </span>
+                <span class="strong">59.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>70/122</span>
+                <span class='fraction'>71/119</span>
             </div>
         
             
@@ -316,11 +316,7 @@
 <a name='L257'></a><a href='#L257'>257</a>
 <a name='L258'></a><a href='#L258'>258</a>
 <a name='L259'></a><a href='#L259'>259</a>
-<a name='L260'></a><a href='#L260'>260</a>
-<a name='L261'></a><a href='#L261'>261</a>
-<a name='L262'></a><a href='#L262'>262</a>
-<a name='L263'></a><a href='#L263'>263</a>
-<a name='L264'></a><a href='#L264'>264</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L260'></a><a href='#L260'>260</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -339,12 +335,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -355,14 +351,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -429,14 +422,14 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -469,7 +462,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -607,7 +599,7 @@ exports.new_book = async (req, res) =&gt; {
     const payload = jwt.verify(token, process.env.mysecretkey);
     const user_is_admin = payload.user_is_admin;
 &nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (user_is_admin) {
+    if (user_is_admin) {
       const new_book = req.body;
       new_book.is_discarded=false;
       new_book.published= new Date(dateFormat(new Date(new_book.published), 'yyyy-mm-dd'));
@@ -617,12 +609,9 @@ exports.new_book = async (req, res) =&gt; {
         throw new Duplication_error('Book already exists');
       }
       const book = <span class="cstat-no" title="statement not covered" >await book_query.create_new_book(new_book);</span>
-<span class="cstat-no" title="statement not covered" >      if (!book) {</span>
-<span class="cstat-no" title="statement not covered" >        throw new Database_operation_error('Book not added');</span>
-      }
 <span class="cstat-no" title="statement not covered" >      return response(null, book.ops[0], 'Book added', res);</span>
     } else {
-<span class="cstat-no" title="statement not covered" >      throw new Access_denial_error('Forbideden: Access is denies');</span>
+      throw new Access_denial_error('Forbideden: Access is denies');
     }
   } catch (err) {
     return response(err, null, err.message, res);
@@ -732,7 +721,6 @@ exports.books_by_genre = async (req, res) =&gt; {
 <span class="cstat-no" title="statement not covered" >      return response(null, [], 'No books in given genre', res);</span>
     }
   } catch (err) {
-<span class="cstat-no" title="statement not covered" >    console.log(err);</span>
 <span class="cstat-no" title="statement not covered" >    return response(err, null, err.message, res);</span>
   }
 };
@@ -853,7 +841,7 @@ exports.book_by_earliest_date = async (req, res) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Mar 08 2021 16:15:22 GMT+0530 (India Standard Time)
+                at Tue Mar 09 2021 14:21:02 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

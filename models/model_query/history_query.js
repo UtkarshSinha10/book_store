@@ -66,7 +66,7 @@ exports.return_books = async (id, return_books_array) => {
  */
 exports.count_books_rented_by_book_id = async (id) => {
   try {
-    const count = History.countDocuments({'$and': [{book_id: id}, {is_returned: false}]});
+    const count = await History.countDocuments({'$and': [{book_id: id}, {is_returned: false}]});
     return count;
   } catch (err) {
     throw new Database_operation_error('Database operation failed');

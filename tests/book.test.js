@@ -10,7 +10,9 @@ beforeAll((done) => {
 
 
 let token;
-describe('Post  login user', () => {
+let token2;
+
+describe('Post login user', () => {
   it('200 on successful login', () => {
     return request.post('/user/login')
         .send({
@@ -20,6 +22,63 @@ describe('Post  login user', () => {
         .then((response)=>{
           token = response.body.data;
           expect(response.statusCode).toBe(200);
+        });
+  });
+
+  it('401 on Credential error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'utkarshsinha@indusos.com',
+          'password': '1234@qwertyyy',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(401);
+        });
+  });
+
+  it('404 on Not found error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'utksarhs@dasd.com',
+          'password': '342q14dsa@3hh',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(404);
+        });
+  });
+});
+describe('Post login user', () => {
+  it('200 on successful login', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'rahulsinha@indusos.com',
+          'password': '1234@qwerty',
+        })
+        .then((response)=>{
+          token2 = response.body.data;
+          expect(response.statusCode).toBe(200);
+        });
+  });
+
+  it('401 on Credential error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'rahulsinha@indusos.com',
+          'password': '1234@qwertyyy',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(401);
+        });
+  });
+
+  it('404 on Not found error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'utksarhs@dasd.com',
+          'password': '342q14dsa@3hh',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(404);
         });
   });
 });
@@ -191,6 +250,23 @@ describe('Post new book', () => {
         })
         .then((response) => {
           expect(response.statusCode).toBe(409);
+        });
+  });
+  it('403 on Access denial error', () => {
+    return request.post('/book/new')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({
+          'name': 'Titans in war',
+          'price': 2500,
+          'published': '1997-01-01',
+          'pages': 509,
+          'author': 'Stanely Morgan',
+          'genre': 'Action',
+          'age_rated': 12,
+          'copies': 17,
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(403);
         });
   });
 });

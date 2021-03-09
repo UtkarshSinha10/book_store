@@ -5,7 +5,7 @@ const dateFormat = require('dateformat');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {response} = require('../response/response');
-const {Not_found_error, Credential_error, Duplication_error, Server_failure_error} = require('../errors/errors');
+const {Not_found_error, Credential_error, Duplication_error} = require('../errors/errors');
 
 /**
  * Login.
@@ -46,7 +46,6 @@ exports.login = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  * @throws Duplication_error
- * @throws Server_failure_error
  */
 exports.register = async (req, res) => {
   try {
@@ -55,29 +54,22 @@ exports.register = async (req, res) => {
       throw new Duplication_error('User already exists');
     }
 
-    bcrypt.hash(req.body.password, 10, async (err, hash_password) => {
-      if (err) {
-        throw new Server_failure_error('Error in password encryption');
-      } else {
-        const new_user = req.body;
-        new_user.password = hash_password;
-        new_user.is_admin = false;
-        new_user.is_active = true;
-        new_user.dob = new Date(dateFormat(new Date(new_user.dob), 'yyyy-mm-dd'));
-        const registered = await user_query.register_user(new_user);
+    const hash_password = await bcrypt.hash(req.body.password, 10);
+    const new_user = req.body;
+    new_user.password = hash_password;
+    new_user.is_admin = false;
+    new_user.is_active = true;
+    new_user.dob = new Date(dateFormat(new Date(new_user.dob), 'yyyy-mm-dd'));
+    const registered = await user_query.register_user(new_user);
 
-        const token = jwt.sign({
-          user_email: new_user.email,
-          user_is_admin: new_user.is_admin,
-        }, process.env.mysecretkey, {expiresIn: '1h'});
+    const token = jwt.sign({
+      user_email: new_user.email,
+      user_is_admin: new_user.is_admin,
+    }, process.env.mysecretkey, {expiresIn: '1h'});
 
-        if (registered) {
-          return response(null, token, 'User registration completed', res);
-        } else {
-          throw new Server_failure_error('Registration denied');
-        }
-      }
-    });
+    if (registered) {
+      return response(null, token, 'User registration completed', res);
+    }
   } catch (err) {
     return response(err, null, err.message, res);
   }

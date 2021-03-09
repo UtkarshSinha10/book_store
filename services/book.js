@@ -32,9 +32,6 @@ exports.new_book = async (req, res) => {
         throw new Duplication_error('Book already exists');
       }
       const book = await book_query.create_new_book(new_book);
-      if (!book) {
-        throw new Database_operation_error('Book not added');
-      }
       return response(null, book.ops[0], 'Book added', res);
     } else {
       throw new Access_denial_error('Forbideden: Access is denies');
@@ -147,7 +144,6 @@ exports.books_by_genre = async (req, res) => {
       return response(null, [], 'No books in given genre', res);
     }
   } catch (err) {
-    console.log(err);
     return response(err, null, err.message, res);
   }
 };

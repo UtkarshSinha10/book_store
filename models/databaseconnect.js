@@ -5,14 +5,7 @@ const mongoose = require('mongoose');
  * Process terminates on database connection failure.
  */
 try {
-  mongoose.connect('mongodb://localhost:27017/assignment', {useUnifiedTopology: true, useNewUrlParser: true}, (error)=>{
-    if ( error ) {
-      process.exit();
-      console.log('Error while connecting db');
-    } else {
-      console.log('db connected');
-    }
-  });
+  mongoose.connect('mongodb://localhost:27017/assignment', {useUnifiedTopology: true, useNewUrlParser: true});
 } catch (err) {
   process.exit();
 }
