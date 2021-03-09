@@ -5,7 +5,7 @@ const dateFormat = require('dateformat');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {response} = require('../response/response');
-const {Not_found_error, Credential_error, Duplication_error} = require('../errors/errors');
+const {Not_found_error, Credential_error, Duplication_error, Access_denial_error} = require('../errors/errors');
 
 /**
  * Login.
@@ -89,11 +89,14 @@ exports.new_admin = async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
     const user_is_admin = payload.user_is_admin;
-
+    const user = await user_query.find_user(req.body.email);
+    if (!user) {
+      throw new Not_found_error('User not found');
+    }
     if ( user_is_admin ) {
       const admin = await user_query.update_is_admin(req.body.email);
       if (admin) {
-        return response(null, admin, 'Admin privileges granted');
+        return response(null, admin, 'Admin privileges granted', res);
       } else {
         throw new Not_found_error('User not found');
       }

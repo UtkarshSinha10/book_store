@@ -2,12 +2,7 @@
 const app = require('../app');
 const supertest = require('supertest');
 const request = supertest(app);
-
-beforeAll((done) => {
-  const dbconnect = require('../models/testdatabaseconnect');
-  done();
-});
-
+const dbconnect = require('../models/testdatabaseconnect');
 
 let token;
 let token2;
@@ -47,7 +42,7 @@ describe('Post login user', () => {
         });
   });
 });
-describe('Post login user', () => {
+describe('Post  login user', () => {
   it('200 on successful login', () => {
     return request.post('/user/login')
         .send({
@@ -267,6 +262,97 @@ describe('Post new book', () => {
         })
         .then((response) => {
           expect(response.statusCode).toBe(403);
+        });
+  });
+});
+
+describe('Post update book', () => {
+  it('500 on validation error', () => {
+    return request.post('/book/update')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'Book_id': '2345342434234',
+          'genre': 'Action',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(500);
+        });
+  });
+  it('403 on Access denial error', () => {
+    return request.post('/book/update')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({
+          'book_id': '603c8fc70653842e7089b9c4',
+          'copies': 888,
+          'genre': 'adventure',
+          'price': 1234567,
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(403);
+        });
+  });
+  it('500 on Database operation failed', () => {
+    return request.post('/book/update')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'book_id': '603c8fc70653842e7qqqq9c4',
+          'copies': 888,
+          'genre': 'adventure',
+          'price': 1234567,
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(500);
+        });
+  });
+  it('200 on successful update', () => {
+    return request.post('/book/update')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'book_id': '603c8fc70653842e7089b9c4',
+          'copies': 888,
+          'genre': 'adventure',
+          'price': 1234567,
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(200);
+        });
+  });
+});
+
+describe('Delete reomve book', () => {
+  it('403 on Access denial error', () => {
+    return request.delete('/book/remove')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({
+          'book': [
+            {'book_id': '603c95e11a9c7c0e78a0abe7'},
+          ],
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(403);
+        });
+  });
+  it('400 on missing Authentication token', () => {
+    return request.delete('/book/remove')
+        .send({
+          'book': [
+            {'book_id': '603c95e11a9c7c0e78a0abe7'},
+          ],
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(400);
+        });
+  });
+  it('200 on successful book removal', () => {
+    return request.delete('/book/remove')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'book': [
+            {'book_id': '604206c44acf6106ec08ff83'},
+          ],
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(200);
         });
   });
 });

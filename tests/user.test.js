@@ -2,13 +2,9 @@
 const app = require('../app');
 const supertest = require('supertest');
 const request = supertest(app);
-
+const dbconnect = require('../models/testdatabaseconnect');
 let token;
-
-beforeAll((done) => {
-  const dbconnect = require('../models/testdatabaseconnect');
-  done();
-});
+let token2;
 
 describe('Post login user', () => {
   it('200 on successful login', () => {
@@ -27,6 +23,42 @@ describe('Post login user', () => {
     return request.post('/user/login')
         .send({
           'email': 'utkarshsinha@indusos.com',
+          'password': '1234@qwertyyy',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(401);
+        });
+  });
+
+  it('404 on Not found error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'utksarhs@dasd.com',
+          'password': '342q14dsa@3hh',
+        })
+        .then((response)=>{
+          expect(response.statusCode).toBe(404);
+        });
+  });
+});
+
+describe('Post login user', () => {
+  it('200 on successful login', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'rahulsinha@indusos.com',
+          'password': '1234@qwerty',
+        })
+        .then((response)=>{
+          token2 = response.body.data;
+          expect(response.statusCode).toBe(200);
+        });
+  });
+
+  it('401 on Credential error', () => {
+    return request.post('/user/login')
+        .send({
+          'email': 'rahulsinha@indusos.com',
           'password': '1234@qwertyyy',
         })
         .then((response)=>{
@@ -106,6 +138,58 @@ describe('Post Register new user', () => {
         })
         .then((response)=>{
           expect(response.statusCode).toBe(500);
+        });
+  });
+});
+
+describe('Put new admin', () => {
+  it('200 on admin previleges', () => {
+    return request.put('/user/admin')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'email': 'prafulsinha@indusos.com',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(200);
+        });
+  });
+  it('403 on Access denial', () => {
+    return request.put('/user/admin')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({
+          'email': 'prafulsinha@indusos.com',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(403);
+        });
+  });
+  it('500 on validation error', () => {
+    return request.put('/user/admin')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'Emailid': 'prafulsinha@indusos.com',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(500);
+        });
+  });
+  it('500 on missing Authenticaiton key', () => {
+    return request.put('/user/admin')
+        .send({
+          'email': 'prafulsinha@indusos.com',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(400);
+        });
+  });
+  it('404 on Not found error', () => {
+    return request.put('/user/admin')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'email': 'piriyasinha@indusos.com',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(404);
         });
   });
 });

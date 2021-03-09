@@ -3,11 +3,7 @@ const app = require('../app');
 const supertest = require('supertest');
 const {post} = require('../app');
 const request = supertest(app);
-
-beforeAll((done) => {
-  const dbconnect = require('../models/testdatabaseconnect');
-  done();
-});
+const dbconnect = require('../models/testdatabaseconnect');
 
 let token;
 let token2;
@@ -227,6 +223,7 @@ describe('Rent books to a user', () => {
           ],
         })
         .then((response) => {
+          // console.log(response);
           expect(response.statusCode).toBe(200);
         });
   });
@@ -246,11 +243,11 @@ describe('Return books', () => {
         });
   });
   it('500 on Validation failure', () => {
-    request.put('/history/rentbooks')
+    return request.put('/history/returnbooks')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          'book': [
-            {'id': '13434523423234'},
+          'book_id': [
+            {'book': '13434523423234'},
           ],
         })
         .then((response) => {

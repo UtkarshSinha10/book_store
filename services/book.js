@@ -4,7 +4,7 @@ const history_query = require('../models/model_query/history_query');
 const jwt = require('jsonwebtoken');
 const dateFormat = require('dateformat');
 const {response} = require('../response/response');
-const {Not_found_error, Database_operation_error, Duplication_error, Access_denial_error} = require('../errors/errors');
+const {Not_found_error, Duplication_error, Access_denial_error} = require('../errors/errors');
 
 /**
  * Registering new book function.
@@ -73,9 +73,6 @@ exports.update_book = async (req, res) => {
           new_book.price = Number(req.body.price);
         }
         const update_book = await book_query.update_book(req.body.book_id, new_book);
-        if (!update_book) {
-          throw new Database_operation_error('Updation failed');
-        }
         return response(null, update_book, 'Updation successful', res);
       }
     } else {

@@ -24,12 +24,13 @@ exports.rent_books = async (req, res) => {
     const user = await user_query.find_user(user_email);
     const id = user._id;
     const count_books_rented = await history_query.count_books_rented(id);
-
+    const dob = new Date(user.dob);
+    const age = Math.floor((new Date() - dob.getTime())/31557600000);
     if (count_books_rented>=10) {
       throw new Limit_exceeded_error('Maximum limit to issue books reached');
     } else {
       const new_book_array = book_array.map((book) => book.book_id);
-      const books_to_be_rented = await book_query.book_to_be_rented(1, new_book_array);
+      const books_to_be_rented = await book_query.book_to_be_rented(age, new_book_array);
       const avaiable_books_to_be_rented = [];
       for (let i = 0; i< books_to_be_rented.length; i++) {
         const rented = await history_query.count_books_rented_by_book_id(books_to_be_rented[i].id);
