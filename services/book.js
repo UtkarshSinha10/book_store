@@ -1,10 +1,13 @@
-/* eslint-disable max-len */
 const book_query = require('../models/model_query/book_query');
 const history_query = require('../models/model_query/history_query');
 const jwt = require('jsonwebtoken');
 const dateFormat = require('dateformat');
 const {response} = require('../response/response');
-const {Not_found_error, Duplication_error, Access_denial_error} = require('../errors/errors');
+const {
+  Not_found_error,
+  Duplication_error,
+  Access_denial_error,
+} = require('../errors/errors');
 
 /**
  * Registering new book function.
@@ -25,7 +28,9 @@ const new_book = async (req, res) => {
     if (user_is_admin) {
       const new_book = req.body;
       new_book.is_discarded = false;
-      new_book.published = new Date(dateFormat(new Date(new_book.published), 'yyyy-mm-dd'));
+      new_book.published = new Date(
+          dateFormat(new Date(new_book.published), 'yyyy-mm-dd'),
+      );
       const found_book = await book_query.find_a_book_by_name(new_book.name);
 
       if (found_book) {
@@ -72,7 +77,9 @@ const update_book = async (req, res) => {
         if (req.body.price) {
           new_book.price = Number(req.body.price);
         }
-        const update_book = await book_query.update_book(req.body.book_id, new_book);
+        const update_book = await
+        book_query.update_book(req.body.book_id, new_book);
+
         return response(null, update_book, 'Updation successful', res);
       }
     } else {
@@ -94,12 +101,16 @@ const current_books = async (req, res) => {
   try {
     const skip = req.query.skip;
     const limit = req.query.limit;
-    const books_registered_in_store = await book_query.books_registered_in_store(skip, limit);
+    const books_registered_in_store = await
+    book_query.books_registered_in_store(skip, limit);
+
     const books_array = [];
     for (let index = 0; index < books_registered_in_store.length; index++) {
       const book_id = books_registered_in_store[index]._id;
       const total_copies = books_registered_in_store[index].copies;
-      const rented_copies_of_book = await history_query.rented_copies_of_book(book_id);
+      const rented_copies_of_book = await
+      history_query.rented_copies_of_book(book_id);
+
       if (rented_copies_of_book.length) {
         books_array.push({
           book_id: book_id,
@@ -184,7 +195,9 @@ const remove_books = async (req, res) => {
     if (user_is_admin) {
       const book_array = req.body.book;
       const new_book_array = book_array.map((book) => book.book_id);
-      const book_modification_details = await book_query.remove_book(new_book_array);
+      const book_modification_details = await
+      book_query.remove_book(new_book_array);
+
       return response(null, book_modification_details, 'Books removed', res);
     } else {
       throw new Access_denial_error('Forbidden: Access is denied');
@@ -206,11 +219,13 @@ const books_by_author_match = async (req, res) => {
     const author = req.query.author;
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
-    const book_list = await book_query.books_by_author_match(author, skip, limit);
+    const book_list = await
+    book_query.books_by_author_match(author, skip, limit);
+
     if (book_list.length > 0) {
-      return response(null, book_list, 'Search by matching author\'s name successful', res);
+      return response(null, book_list, 'Books by matching author\'s name', res);
     } else {
-      return response(null, [], 'No books written by given matching author\'s name', res);
+      return response(null, [], 'No books with matching author\'s name', res);
     }
   } catch (err) {
     return response(err, null, err.message, res);
@@ -238,11 +253,23 @@ const book_by_earliest_date = async (req, res) => {
           if (difference == 0) {
             const history = await history_query.find_earliest_date(book_id);
             const rent_date = new Date(history[0].rent_date);
-            const available_date = dateFormat(new Date(rent_date.setDate(rent_date.getDate() + 14)), 'yyyy-mm-dd');
-            return response(null, available_date, 'Book will be earrliest avialble on given date', res);
+            const available_date = dateFormat(
+                new Date(rent_date.setDate(rent_date.getDate() + 14)),
+                'yyyy-mm-dd',
+            );
+
+            return response(
+                null,
+                available_date,
+                'Book will be earrliest avialble on given date',
+                res);
           }
         } else {
-          return response(null, dateFormat(new Date()), 'Book is available to issue', res);
+          return response(
+              null,
+              dateFormat(new Date()),
+              'Books available to issue',
+              res);
         }
       } else {
         return response(null, [], 'Book removed from the store', res);

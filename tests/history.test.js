@@ -223,7 +223,7 @@ describe('Rent books to a user', () => {
           ],
         })
         .then((response) => {
-        // console.log(response);
+          // console.log(response);
           expect(response.statusCode).toBe(200);
         });
   });

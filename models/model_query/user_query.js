@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const {Database_operation_error} = require('../../errors/errors');
 const user = require('../model_schema/user');
 
@@ -60,7 +59,12 @@ const update_is_admin = async (email) => {
  */
 const find_all_users = async (skip, limit) => {
   try {
-    const users = await user.find({is_active: true}).select('name email').skip(skip).limit(limit);
+    const users = await user.find(
+        {is_active: true},
+    )
+        .select('name email')
+        .skip(skip)
+        .limit(limit);
     return users;
   } catch (err) {
     throw new Database_operation_error('Database operation failed');

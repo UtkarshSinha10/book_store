@@ -1,11 +1,15 @@
-/* eslint-disable max-len */
 const user_query = require('../models/model_query/user_query');
 const dateFormat = require('dateformat');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {response} = require('../response/response');
-const {Not_found_error, Credential_error, Duplication_error, Access_denial_error} = require('../errors/errors');
+const {
+  Not_found_error,
+  Credential_error,
+  Duplication_error,
+  Access_denial_error,
+} = require('../errors/errors');
 
 /**
  * Login.

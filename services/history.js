@@ -1,11 +1,14 @@
-/* eslint-disable max-len */
 const history_query = require('../models/model_query/history_query');
 const user_query = require('../models/model_query/user_query');
 const book_query = require('../models/model_query/book_query');
 const dateFormat = require('dateformat');
 const jwt = require('jsonwebtoken');
 const {response} = require('../response/response');
-const {Not_found_error, Access_denial_error, Limit_exceeded_error} = require('../errors/errors');
+const {
+  Not_found_error,
+  Access_denial_error,
+  Limit_exceeded_error,
+} = require('../errors/errors');
 
 /**
  * Rent books function.
@@ -30,20 +33,27 @@ const rent_books = async (req, res) => {
       throw new Limit_exceeded_error('Maximum limit to issue books reached');
     } else {
       const new_book_array = book_array.map((book) => book.book_id);
-      const books_to_be_rented = await book_query.book_to_be_rented(age, new_book_array);
+      const books_to_be_rented = await
+      book_query.book_to_be_rented(age, new_book_array);
+
       const avaiable_books_to_be_rented = [];
       for (let i = 0; i < books_to_be_rented.length; i++) {
-        const rented = await history_query.count_books_rented_by_book_id(books_to_be_rented[i].id);
+        const rented = await
+        history_query.count_books_rented_by_book_id(books_to_be_rented[i].id);
         if (books_to_be_rented[i].copies - rented > 0) {
           avaiable_books_to_be_rented.push(books_to_be_rented[i]);
         }
       }
 
       const rent_books_array = [];
+      const not_rented_books_array = [];
       if (avaiable_books_to_be_rented.length === 0) {
-        return response(null, [], 'Books are not either availabe or already rented to you', res);
+        return response(null, [], 'Books are not availabe', res);
       }
-      for (let i = 0; i < (10 - count_books_rented) && i < avaiable_books_to_be_rented.length; i++) {
+      let i = 0;
+      for (;
+        i < (10 - count_books_rented) && i < avaiable_books_to_be_rented.length;
+        i++) {
         rent_books_array.push(
             {
               user_id: id,
@@ -55,8 +65,19 @@ const rent_books = async (req, res) => {
             },
         );
       }
+      while (i<avaiable_books_to_be_rented.length) {
+        not_rented_books_array.push(
+            {
+              book_id: avaiable_books_to_be_rented[i]._id,
+            },
+        );
+      }
       const rent_books = await history_query.rent_books(rent_books_array);
-      return response(null, rent_books, 'Books rented to you', res);
+      const rent_response = {
+        rented_books: rent_books,
+        not_rented_books: not_rented_books_array,
+      };
+      return response(null, rent_response, 'Rental information', res);
     }
   } catch (err) {
     return response(err, null, err.message, res);
@@ -116,11 +137,11 @@ const amount_spent = async (req, res) => {
       const last_date = today.setDate(today.getDate() - 100);
       const amount = await history_query.amount_spent(user._id, last_date);
       if (amount.length === 0) {
-        return response(null, 0, 'Amount spent by user in last 100 days', res);
+        return response(null, 0, 'No amount spentin last 100 days', res);
       }
       const user_spent = amount[0].total;
 
-      return response(null, user_spent, 'Amount spent by user in last 100 days', res);
+      return response(null, user_spent, 'Amount spent in last 100 days', res);
     } else {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
@@ -140,7 +161,7 @@ const amount_spent = async (req, res) => {
 const rented_books = async (req, res) => {
   try {
     const rented_books = await history_query.find_all_rented_books();
-    return response(null, rented_books, 'Rented Book Ids and their copies', res);
+    return response(null, rented_books, 'Rented books id and its copies', res);
   } catch (err) {
     return response(err, null, err.message, res);
   }
@@ -170,7 +191,7 @@ const rented_books_to_user = async (req, res) => {
       const id = user._id;
       const rented_books_to_user = await history_query.rented_books_to_user(id);
       if (rented_books_to_user.length) {
-        return response(null, rented_books_to_user, 'Books rented to the user', res);
+        return response(null, rented_books_to_user, 'Books to user', res);
       } else {
         return response(null, [], 'No rented books to user found', res);
       }
