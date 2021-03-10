@@ -2,7 +2,7 @@ const history_query = require('../models/model_query/history_query');
 const user_query = require('../models/model_query/user_query');
 const book_query = require('../models/model_query/book_query');
 const dateFormat = require('dateformat');
-const jwt = require('jsonwebtoken');
+const {payload_generator} = require('../helper/payload_generator');
 const {response} = require('../response/response');
 const {
   Not_found_error,
@@ -21,8 +21,9 @@ const {
 const rent_books = async (req, res) => {
   try {
     const book_array = req.body.book;
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -95,8 +96,9 @@ const rent_books = async (req, res) => {
 const return_books = async (req, res) => {
   try {
     const book_array = req.body.book;
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -124,8 +126,9 @@ const return_books = async (req, res) => {
 const amount_spent = async (req, res) => {
   try {
     const email = req.body.email;
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const is_admin = payload.user_is_admin;
     if ((is_admin) || (email === user_email)) {
@@ -178,8 +181,9 @@ const rented_books = async (req, res) => {
  */
 const rented_books_to_user = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user_is_admin = payload.user_is_admin;
     const email = req.body.email;

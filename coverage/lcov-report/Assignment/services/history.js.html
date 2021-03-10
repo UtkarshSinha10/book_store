@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.28% </span>
+                <span class="strong">72.16% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>73/101</span>
+                <span class='fraction'>70/97</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.45% </span>
+                <span class="strong">72.34% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>71/98</span>
+                <span class='fraction'>68/94</span>
             </div>
         
             
@@ -269,7 +269,11 @@
 <a name='L210'></a><a href='#L210'>210</a>
 <a name='L211'></a><a href='#L211'>211</a>
 <a name='L212'></a><a href='#L212'>212</a>
-<a name='L213'></a><a href='#L213'>213</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -293,7 +297,8 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -367,7 +372,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -396,7 +402,8 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -450,7 +457,8 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -485,7 +493,7 @@
 const user_query = require('../models/model_query/user_query');
 const book_query = require('../models/model_query/book_query');
 const dateFormat = require('dateformat');
-const jwt = require('jsonwebtoken');
+const {payload_generator} = require('../helper/payload_generator');
 const {response} = require('../response/response');
 const {
   Not_found_error,
@@ -504,8 +512,9 @@ const {
 const rent_books = async (req, res) =&gt; {
   try {
     const book_array = req.body.book;
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -578,8 +587,9 @@ const rent_books = async (req, res) =&gt; {
 const return_books = <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const book_array = <span class="cstat-no" title="statement not covered" >req.body.book;</span>
-    const token = <span class="cstat-no" title="statement not covered" >req.headers.authorization.split(' ')[1];</span>
-    const payload = <span class="cstat-no" title="statement not covered" >jwt.verify(token, process.env.mysecretkey);</span>
+    const payload = <span class="cstat-no" title="statement not covered" >payload_generator(req);</span>
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = <span class="cstat-no" title="statement not covered" >payload.user_email;</span>
     const user = <span class="cstat-no" title="statement not covered" >await user_query.find_user(user_email);</span>
     const id = <span class="cstat-no" title="statement not covered" >user._id;</span>
@@ -607,8 +617,9 @@ const return_books = <span class="fstat-no" title="function not covered" >as</sp
 const amount_spent = async (req, res) =&gt; {
   try {
     const email = req.body.email;
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const is_admin = payload.user_is_admin;
     if ((is_admin) || (email === user_email)) {
@@ -661,8 +672,9 @@ const rented_books = async (req, res) =&gt; {
  */
 const rented_books_to_user = async (req, res) =&gt; {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user_is_admin = payload.user_is_admin;
     const email = req.body.email;
@@ -700,7 +712,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Mar 10 2021 12:59:55 GMT+0530 (India Standard Time)
+                at Wed Mar 10 2021 14:49:06 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

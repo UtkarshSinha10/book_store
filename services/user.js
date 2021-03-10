@@ -1,6 +1,6 @@
 const user_query = require('../models/model_query/user_query');
 const dateFormat = require('dateformat');
-
+const {payload_generator} = require('../helper/payload_generator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {response} = require('../response/response');
@@ -26,8 +26,10 @@ const login = async (req, res) => {
     if (!user) {
       throw new Not_found_error('User not found');
     }
-    // eslint-disable-next-line max-len
-    const password_matching = await bcrypt.compare(req.body.password, user.password);
+    const password_matching = await bcrypt.compare(
+        req.body.password,
+        user.password,
+    );
 
     if (password_matching) {
       const token = jwt.sign({
@@ -90,8 +92,7 @@ const register = async (req, res) => {
  */
 const new_admin = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
     const user = await user_query.find_user(req.body.email);
     if (!user) {

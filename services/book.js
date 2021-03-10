@@ -1,7 +1,7 @@
 const book_query = require('../models/model_query/book_query');
 const history_query = require('../models/model_query/history_query');
-const jwt = require('jsonwebtoken');
 const dateFormat = require('dateformat');
+const {payload_generator} = require('../helper/payload_generator');
 const {response} = require('../response/response');
 const {
   Not_found_error,
@@ -21,8 +21,7 @@ const {
  */
 const new_book = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
 
     if (user_is_admin) {
@@ -58,8 +57,7 @@ const new_book = async (req, res) => {
  */
 const update_book = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
 
     if (user_is_admin) {
@@ -189,8 +187,7 @@ const books_by_author = async (req, res) => {
  */
 const remove_books = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.mysecretkey);
+    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
     if (user_is_admin) {
       const book_array = req.body.book;
