@@ -9,7 +9,7 @@ const user = require('../model_schema/user');
  * @return {*} Mongoose object of a user.
  * @throws Database_operation_error.
  */
-exports.find_user = async (email) => {
+const find_user = async (email) => {
   try {
     const found_user = await user.collection.findOne({email: email});
     return found_user;
@@ -25,7 +25,7 @@ exports.find_user = async (email) => {
  * @return {*} Mongoose insertion object.
  * @throws Database_operation_error.
  */
-exports.register_user = async (new_user) => {
+const register_user = async (new_user) => {
   try {
     const register_user = await user.collection.insertOne(new_user);
     return register_user;
@@ -41,7 +41,7 @@ exports.register_user = async (new_user) => {
  * @return {*} Mongoose update object.
  * @throws Database_operation_error.
  */
-exports.update_is_admin = async (email) => {
+const update_is_admin = async (email) => {
   try {
     const admin = await user.updateOne({email: email}, {is_admin: true});
     return admin;
@@ -58,11 +58,18 @@ exports.update_is_admin = async (email) => {
  * @return {*} Mongoose objects of found user.
  * @throws Database_operation_error
  */
-exports.find_all_users = async (skip, limit) => {
+const find_all_users = async (skip, limit) => {
   try {
     const users = await user.find({is_active: true}).select('name email').skip(skip).limit(limit);
     return users;
   } catch (err) {
     throw new Database_operation_error('Database operation failed');
   }
+};
+
+module.exports = {
+  find_user,
+  register_user,
+  update_is_admin,
+  find_all_users,
 };

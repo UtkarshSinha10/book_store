@@ -14,7 +14,7 @@ describe('Post login user', () => {
           'email': 'utkarshsinha@indusos.com',
           'password': '1234@qwerty',
         })
-        .then((response)=>{
+        .then((response) => {
           token = response.body.data;
           expect(response.statusCode).toBe(200);
         });
@@ -26,7 +26,7 @@ describe('Post login user', () => {
           'email': 'utkarshsinha@indusos.com',
           'password': '1234@qwertyyy',
         })
-        .then((response)=>{
+        .then((response) => {
           expect(response.statusCode).toBe(401);
         });
   });
@@ -37,7 +37,7 @@ describe('Post login user', () => {
           'email': 'utksarhs@dasd.com',
           'password': '342q14dsa@3hh',
         })
-        .then((response)=>{
+        .then((response) => {
           expect(response.statusCode).toBe(404);
         });
   });
@@ -49,7 +49,7 @@ describe('Post  login user', () => {
           'email': 'rahulsinha@indusos.com',
           'password': '1234@qwerty',
         })
-        .then((response)=>{
+        .then((response) => {
           token2 = response.body.data;
           expect(response.statusCode).toBe(200);
         });
@@ -61,7 +61,7 @@ describe('Post  login user', () => {
           'email': 'rahulsinha@indusos.com',
           'password': '1234@qwertyyy',
         })
-        .then((response)=>{
+        .then((response) => {
           expect(response.statusCode).toBe(401);
         });
   });
@@ -72,14 +72,14 @@ describe('Post  login user', () => {
           'email': 'utksarhs@dasd.com',
           'password': '342q14dsa@3hh',
         })
-        .then((response)=>{
+        .then((response) => {
           expect(response.statusCode).toBe(404);
         });
   });
 });
 
 describe('Get books by author', () => {
-  it('200 on sucessful books retrieval', () =>{
+  it('200 on sucessful books retrieval', () => {
     return request.get('/book/author/?author=Utkarsh Sinha')
         .set('Authorization', `Bearer ${token}`)
         .then((response) => {
@@ -92,7 +92,7 @@ describe('Get books by author', () => {
           expect(response.statusCode).toBe(400);
         });
   });
-  it('200 on sucessful books retrieval', () =>{
+  it('200 on sucessful books retrieval', () => {
     return request.get('/book/author/?author=Rashmi Sengar')
         .set('Authorization', `Bearer ${token}`)
         .then((response) => {

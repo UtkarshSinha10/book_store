@@ -16,7 +16,7 @@ const {Not_found_error, Duplication_error, Access_denial_error} = require('../er
  * @throws Database_operation_error
  * @throws Access_denial_error
  */
-async function new_book(req, res) {
+const new_book = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -24,8 +24,8 @@ async function new_book(req, res) {
 
     if (user_is_admin) {
       const new_book = req.body;
-      new_book.is_discarded=false;
-      new_book.published= new Date(dateFormat(new Date(new_book.published), 'yyyy-mm-dd'));
+      new_book.is_discarded = false;
+      new_book.published = new Date(dateFormat(new Date(new_book.published), 'yyyy-mm-dd'));
       const found_book = await book_query.find_a_book_by_name(new_book.name);
 
       if (found_book) {
@@ -51,7 +51,7 @@ async function new_book(req, res) {
  * @throws Database_operation_error
  * @throws Access_denial_error
  */
-async function update_book(req, res) {
+const update_book = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -90,7 +90,7 @@ async function update_book(req, res) {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-async function current_books(req, res) {
+const current_books = async (req, res) => {
   try {
     const skip = req.query.skip;
     const limit = req.query.limit;
@@ -129,7 +129,7 @@ async function current_books(req, res) {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-async function books_by_genre(req, res) {
+const books_by_genre = async (req, res) => {
   try {
     const genre = req.query.genre;
     const skip = Number(req.query.skip);
@@ -152,13 +152,13 @@ async function books_by_genre(req, res) {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-async function books_by_author(req, res) {
+const books_by_author = async (req, res) => {
   try {
     const author = req.query.author;
     const skip = req.query.skip;
     const limit = req.query.limit;
     const book_list = await book_query.books_by_author(author, skip, limit);
-    if (book_list.length>0) {
+    if (book_list.length > 0) {
       return response(null, book_list, 'Search by author successful', res);
     } else {
       return response(null, [], 'No books by given author', res);
@@ -176,7 +176,7 @@ async function books_by_author(req, res) {
  * @return {*} Sends Response body to response function.
  * @throws Access_denial_error
  */
-async function remove_books(req, res) {
+const remove_books = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -201,13 +201,13 @@ async function remove_books(req, res) {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-async function books_by_author_match(req, res) {
+const books_by_author_match = async (req, res) => {
   try {
     const author = req.query.author;
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_author_match(author, skip, limit);
-    if (book_list.length>0) {
+    if (book_list.length > 0) {
       return response(null, book_list, 'Search by matching author\'s name successful', res);
     } else {
       return response(null, [], 'No books written by given matching author\'s name', res);
@@ -226,7 +226,7 @@ async function books_by_author_match(req, res) {
  * @throws Duplication_error
  * @throws Not_found_error
  */
-async function book_by_earliest_date(req, res) {
+const book_by_earliest_date = async (req, res) => {
   try {
     const book_id = req.query.book_id;
     const book = await book_query.find_a_book_by_id(book_id);
@@ -238,7 +238,7 @@ async function book_by_earliest_date(req, res) {
           if (difference == 0) {
             const history = await history_query.find_earliest_date(book_id);
             const rent_date = new Date(history[0].rent_date);
-            const available_date = dateFormat(new Date(rent_date.setDate(rent_date.getDate()+14)), 'yyyy-mm-dd');
+            const available_date = dateFormat(new Date(rent_date.setDate(rent_date.getDate() + 14)), 'yyyy-mm-dd');
             return response(null, available_date, 'Book will be earrliest avialble on given date', res);
           }
         } else {

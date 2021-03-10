@@ -12,7 +12,7 @@ const {Database_operation_error} = require('../../errors/errors');
  * @return {*} Count of rented books.
  * @throws Database_operation_error.
  */
-exports.count_books_rented = async (id) => {
+const count_books_rented = async (id) => {
   try {
     const count = await History.countDocuments({'$and': [{user_id: id}, {is_returned: true}]});
     return count;
@@ -28,7 +28,7 @@ exports.count_books_rented = async (id) => {
  * @return {*} Mongoose update object.
  * @throws Database_operation_error.
  */
-exports.rent_books = async (rent_books_array) => {
+const rent_books = async (rent_books_array) => {
   try {
     const rent_books = await History.insertMany(rent_books_array);
     return rent_books;
@@ -45,7 +45,7 @@ exports.rent_books = async (rent_books_array) => {
  * @return {*} Mongoose update objects.
  * @throws Database_operation_error.
  */
-exports.return_books = async (id, return_books_array) => {
+const return_books = async (id, return_books_array) => {
   try {
     console.log(id);
     // console.log(return_books_array);
@@ -64,7 +64,7 @@ exports.return_books = async (id, return_books_array) => {
  * @return {Number} Count of book copies rented.
  * @throws Database_operation_error.
  */
-exports.count_books_rented_by_book_id = async (id) => {
+const count_books_rented_by_book_id = async (id) => {
   try {
     const count = await History.countDocuments({'$and': [{book_id: id}, {is_returned: false}]});
     return count;
@@ -81,7 +81,7 @@ exports.count_books_rented_by_book_id = async (id) => {
  * @return {Number} Sum of money spent.
  * @throws Database_operation_error.
  */
-exports.amount_spent = async (id, last_date) => {
+const amount_spent = async (id, last_date) => {
   try {
     const date = new Date(new Date(null).setSeconds(last_date/1000));
     // eslint-disable-next-line new-cap
@@ -98,7 +98,7 @@ exports.amount_spent = async (id, last_date) => {
  * @return {*} Array of objects with book id and copies rented.
  * @throws Database_operation_error.
  */
-exports.find_all_rented_books = async () => {
+const find_all_rented_books = async () => {
   try {
     const rented_books = await History.aggregate([{'$match': {is_returned: false}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
     return rented_books;
@@ -114,7 +114,7 @@ exports.find_all_rented_books = async () => {
  * @return {*} Array of book objects rented to the user.
  * @throws Database_operation_error.
  */
-exports.rented_books_to_user = async (id) => {
+const rented_books_to_user = async (id) => {
   try {
     const rented_books_to_user = await History.find({book_id: id, is_returned: false});
     return rented_books_to_user;
@@ -130,7 +130,7 @@ exports.rented_books_to_user = async (id) => {
  * @return {*} Mongoose object of group by book id and rented copies.
  * @throws Database_operation_error.
  */
-exports.rented_copies_of_book = async (id) => {
+const rented_copies_of_book = async (id) => {
   try {
     const rented_copies_of_book = await History.aggregate([{'$match': {'$and': [{book_id: Mongoose.Types.ObjectId(id)}, {is_returned: false}]}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
     // console.log(rented_copies_of_book);
@@ -147,11 +147,23 @@ exports.rented_copies_of_book = async (id) => {
  * @return {*} Mongoose object of history document.
  * @throws Database_operation_error.
  */
-exports.find_earliest_date = async (book_id) => {
+const find_earliest_date = async (book_id) => {
   try {
     const history = await History.find({book_id: book_id, is_returned: false}).sort({rent_date: 1}).limit(1);
     return history;
   } catch (err) {
     throw new Database_operation_error('Database operation failed');
   }
+};
+
+module.exports = {
+  count_books_rented,
+  rent_books,
+  return_books,
+  count_books_rented_by_book_id,
+  amount_spent,
+  find_all_rented_books,
+  rented_books_to_user,
+  rented_copies_of_book,
+  find_earliest_date,
 };

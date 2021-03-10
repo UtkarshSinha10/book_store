@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56.86% </span>
+                <span class="strong">57.69% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>29/51</span>
+                <span class='fraction'>30/52</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56.86% </span>
+                <span class="strong">57.69% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>29/51</span>
+                <span class='fraction'>30/52</span>
             </div>
         
             
@@ -214,7 +214,19 @@
 <a name='L155'></a><a href='#L155'>155</a>
 <a name='L156'></a><a href='#L156'>156</a>
 <a name='L157'></a><a href='#L157'>157</a>
-<a name='L158'></a><a href='#L158'>158</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -369,6 +381,18 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* eslint-disable new-cap */
@@ -385,7 +409,7 @@ const {Database_operation_error} = require('../../errors/errors');
  * @return {*} Count of rented books.
  * @throws Database_operation_error.
  */
-exports.count_books_rented = async (id) =&gt; {
+const count_books_rented = async (id) =&gt; {
   try {
     const count = await History.countDocuments({'$and': [{user_id: id}, {is_returned: true}]});
     return count;
@@ -401,7 +425,7 @@ exports.count_books_rented = async (id) =&gt; {
  * @return {*} Mongoose update object.
  * @throws Database_operation_error.
  */
-exports.rent_books = <span class="fstat-no" title="function not covered" >as</span>ync (rent_books_array) =&gt; {
+const rent_books = <span class="fstat-no" title="function not covered" >as</span>ync (rent_books_array) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const rent_books = <span class="cstat-no" title="statement not covered" >await History.insertMany(rent_books_array);</span>
 <span class="cstat-no" title="statement not covered" >    return rent_books;</span>
@@ -418,7 +442,7 @@ exports.rent_books = <span class="fstat-no" title="function not covered" >as</sp
  * @return {*} Mongoose update objects.
  * @throws Database_operation_error.
  */
-exports.return_books = <span class="fstat-no" title="function not covered" >as</span>ync (id, return_books_array) =&gt; {
+const return_books = <span class="fstat-no" title="function not covered" >as</span>ync (id, return_books_array) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    console.log(id);</span>
     // console.log(return_books_array);
@@ -437,7 +461,7 @@ exports.return_books = <span class="fstat-no" title="function not covered" >as</
  * @return {Number} Count of book copies rented.
  * @throws Database_operation_error.
  */
-exports.count_books_rented_by_book_id = <span class="fstat-no" title="function not covered" >as</span>ync (id) =&gt; {
+const count_books_rented_by_book_id = <span class="fstat-no" title="function not covered" >as</span>ync (id) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const count = <span class="cstat-no" title="statement not covered" >await History.countDocuments({'$and': [{book_id: id}, {is_returned: false}]});</span>
 <span class="cstat-no" title="statement not covered" >    return count;</span>
@@ -454,7 +478,7 @@ exports.count_books_rented_by_book_id = <span class="fstat-no" title="function n
  * @return {Number} Sum of money spent.
  * @throws Database_operation_error.
  */
-exports.amount_spent = async (id, last_date) =&gt; {
+const amount_spent = async (id, last_date) =&gt; {
   try {
     const date = new Date(new Date(null).setSeconds(last_date/1000));
     // eslint-disable-next-line new-cap
@@ -471,7 +495,7 @@ exports.amount_spent = async (id, last_date) =&gt; {
  * @return {*} Array of objects with book id and copies rented.
  * @throws Database_operation_error.
  */
-exports.find_all_rented_books = async () =&gt; {
+const find_all_rented_books = async () =&gt; {
   try {
     const rented_books = await History.aggregate([{'$match': {is_returned: false}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
     return rented_books;
@@ -487,7 +511,7 @@ exports.find_all_rented_books = async () =&gt; {
  * @return {*} Array of book objects rented to the user.
  * @throws Database_operation_error.
  */
-exports.rented_books_to_user = async (id) =&gt; {
+const rented_books_to_user = async (id) =&gt; {
   try {
     const rented_books_to_user = await History.find({book_id: id, is_returned: false});
     return rented_books_to_user;
@@ -503,7 +527,7 @@ exports.rented_books_to_user = async (id) =&gt; {
  * @return {*} Mongoose object of group by book id and rented copies.
  * @throws Database_operation_error.
  */
-exports.rented_copies_of_book = async (id) =&gt; {
+const rented_copies_of_book = async (id) =&gt; {
   try {
     const rented_copies_of_book = await History.aggregate([{'$match': {'$and': [{book_id: Mongoose.Types.ObjectId(id)}, {is_returned: false}]}}, {'$group': {_id: '$book_id', total: {'$sum': 1}}}]);
     // console.log(rented_copies_of_book);
@@ -520,13 +544,25 @@ exports.rented_copies_of_book = async (id) =&gt; {
  * @return {*} Mongoose object of history document.
  * @throws Database_operation_error.
  */
-exports.find_earliest_date = <span class="fstat-no" title="function not covered" >as</span>ync (book_id) =&gt; {
+const find_earliest_date = <span class="fstat-no" title="function not covered" >as</span>ync (book_id) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const history = <span class="cstat-no" title="statement not covered" >await History.find({book_id: book_id, is_returned: false}).sort({rent_date: 1}).limit(1);</span>
 <span class="cstat-no" title="statement not covered" >    return history;</span>
   } catch (err) {
 <span class="cstat-no" title="statement not covered" >    throw new Database_operation_error('Database operation failed');</span>
   }
+};
+&nbsp;
+module.exports = {
+  count_books_rented,
+  rent_books,
+  return_books,
+  count_books_rented_by_book_id,
+  amount_spent,
+  find_all_rented_books,
+  rented_books_to_user,
+  rented_copies_of_book,
+  find_earliest_date,
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -535,7 +571,7 @@ exports.find_earliest_date = <span class="fstat-no" title="function not covered"
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Mar 09 2021 17:39:42 GMT+0530 (India Standard Time)
+                at Wed Mar 10 2021 12:02:16 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>

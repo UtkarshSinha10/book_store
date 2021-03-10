@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.65% </span>
+                <span class="strong">72.16% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>65/92</span>
+                <span class='fraction'>70/97</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.59% </span>
+                <span class="strong">73.12% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>63/88</span>
+                <span class='fraction'>68/93</span>
             </div>
         
             
@@ -265,7 +265,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -321,7 +321,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -350,7 +350,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -387,7 +387,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -405,7 +405,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -456,7 +456,7 @@ const {Not_found_error, Access_denial_error, Limit_exceeded_error} = require('..
  * @return {*} Sends Response body to response function.
  * @throws Limit_exceeded_error
  */
-async function rent_books(req, res) {
+const rent_books = async (req, res) =&gt; {
   try {
     const book_array = req.body.book;
     const token = req.headers.authorization.split(' ')[1];
@@ -466,25 +466,25 @@ async function rent_books(req, res) {
     const id = user._id;
     const count_books_rented = await history_query.count_books_rented(id);
     const dob = new Date(user.dob);
-    const age = Math.floor((new Date() - dob.getTime())/31557600000);
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (count_books_rented&gt;=10) {
+    const age = Math.floor((new Date() - dob.getTime()) / 31557600000);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (count_books_rented &gt;= 10) {
 <span class="cstat-no" title="statement not covered" >      throw new Limit_exceeded_error('Maximum limit to issue books reached');</span>
     } else {
       const new_book_array = book_array.map((book) =&gt; book.book_id);
       const books_to_be_rented = await book_query.book_to_be_rented(age, new_book_array);
       const avaiable_books_to_be_rented = [];
-      for (let i = 0; i&lt; books_to_be_rented.length; i++) {
+      for (let i = 0; i &lt; books_to_be_rented.length; i++) {
         const rented = <span class="cstat-no" title="statement not covered" >await history_query.count_books_rented_by_book_id(books_to_be_rented[i].id);</span>
-<span class="cstat-no" title="statement not covered" >        if (books_to_be_rented[i].copies - rented &gt;0) {</span>
+<span class="cstat-no" title="statement not covered" >        if (books_to_be_rented[i].copies - rented &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >          avaiable_books_to_be_rented.push(books_to_be_rented[i]);</span>
         }
       }
 &nbsp;
       const rent_books_array = [];
-      <span class="missing-if-branch" title="else path not taken" >E</span>if ( avaiable_books_to_be_rented.length ==0 ) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (avaiable_books_to_be_rented.length === 0) {
         return response(null, [], 'Books are not either availabe or already rented to you', res);
       }
-<span class="cstat-no" title="statement not covered" >      for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i&lt; (10-count_books_rented) &amp;&amp; i&lt; avaiable_books_to_be_rented.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >      for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; (10 - count_books_rented) &amp;&amp; i &lt; avaiable_books_to_be_rented.length; i++) {</span>
 <span class="cstat-no" title="statement not covered" >        rent_books_array.push(</span>
             {
               user_id: id,
@@ -512,7 +512,7 @@ async function rent_books(req, res) {
  * @return {*} Sends Response body to response function.
  * @throws Not_found_error.
  */
-async function <span class="fstat-no" title="function not covered" >return_books(</span>req, res) {
+const return_books = <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const book_array = <span class="cstat-no" title="statement not covered" >req.body.book;</span>
     const token = <span class="cstat-no" title="statement not covered" >req.headers.authorization.split(' ')[1];</span>
@@ -541,7 +541,7 @@ async function <span class="fstat-no" title="function not covered" >return_books
  * @throws Not_found_error.
  * @throws Access_denial_error.
  */
-async function amount_spent(req, res) {
+const amount_spent = async (req, res) =&gt; {
   try {
     const email = req.body.email;
     const token = req.headers.authorization.split(' ')[1];
@@ -554,7 +554,7 @@ async function amount_spent(req, res) {
         throw new Not_found_error('User not found');
       }
       const today = new Date();
-      const last_date = today.setDate(today.getDate()-100);
+      const last_date = today.setDate(today.getDate() - 100);
       const amount = await history_query.amount_spent(user._id, last_date);
       <span class="missing-if-branch" title="if path not taken" >I</span>if (amount.length === 0) {
 <span class="cstat-no" title="statement not covered" >        return response(null, 0, 'Amount spent by user in last 100 days', res);</span>
@@ -578,7 +578,7 @@ async function amount_spent(req, res) {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-async function rented_books(req, res) {
+const rented_books = async (req, res) =&gt; {
   try {
     const rented_books = await history_query.find_all_rented_books();
     return response(null, rented_books, 'Rented Book Ids and their copies', res);
@@ -596,7 +596,7 @@ async function rented_books(req, res) {
  * @throws Not_found_error.
  * @throws Access_denial_error.
  */
-async function rented_books_to_user(req, res) {
+const rented_books_to_user = async (req, res) =&gt; {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -637,7 +637,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Mar 09 2021 17:39:42 GMT+0530 (India Standard Time)
+                at Wed Mar 10 2021 12:02:16 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

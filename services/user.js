@@ -16,14 +16,14 @@ const {Not_found_error, Credential_error, Duplication_error, Access_denial_error
  * @throws Credential_error
  * @throws Not_found_error
  */
-async function login(req, res) {
+const login = async (req, res) => {
   try {
     const user = await user_query.find_user(req.body.email);
     if (!user) {
       throw new Not_found_error('User not found');
     }
     // eslint-disable-next-line max-len
-    const password_matching = await bcrypt.compare( req.body.password, user.password);
+    const password_matching = await bcrypt.compare(req.body.password, user.password);
 
     if (password_matching) {
       const token = jwt.sign({
@@ -47,7 +47,7 @@ async function login(req, res) {
  * @return {*} Sends Response body to response function.
  * @throws Duplication_error
  */
-async function register(req, res) {
+const register = async (req, res) => {
   try {
     const user = await user_query.find_user(req.body.email);
     if (user) {
@@ -84,7 +84,7 @@ async function register(req, res) {
  * @throws Not_found_error
  * @throws Access_denial_error
  */
-async function new_admin(req, res) {
+const new_admin = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.mysecretkey);
@@ -93,7 +93,7 @@ async function new_admin(req, res) {
     if (!user) {
       throw new Not_found_error('User not found');
     }
-    if ( user_is_admin ) {
+    if (user_is_admin) {
       const admin = await user_query.update_is_admin(req.body.email);
       if (admin) {
         return response(null, admin, 'Admin privileges granted', res);
@@ -115,7 +115,7 @@ async function new_admin(req, res) {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-async function get_all_users(req, res) {
+const get_all_users = async (req, res) => {
   try {
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);

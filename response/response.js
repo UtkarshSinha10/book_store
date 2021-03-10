@@ -5,7 +5,7 @@
  * @param {string} message The message provided to the user.
  * @param {*} res For sending response to the user.
  */
-function response(err, result, message, res) {
+const response = (err, result, message, res) => {
   if (err) {
     res.status(err.code).json({
       data: null,

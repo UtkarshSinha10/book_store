@@ -8,16 +8,18 @@ try {
    */
   const dbconnect = require('./models/databaseconnect');
 } catch (err) {
-  process.exit(500);
+  console.log('Database connection failed.');
+  process.exit(1);
 }
 
 try {
   /**
    * Starting server.
    */
-  app.listen(port, ()=>{
+  app.listen(port, () => {
     console.log(`Server is running at port ${port}`);
   });
 } catch (err) {
-  process.exit(500);
+  console.log(`Server cannot start at port ${port}`);
+  process.exit(1);
 };

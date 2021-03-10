@@ -8,7 +8,7 @@ const {response} = require('../../response/response');
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function login_validator(req, res, next) {
+const login_validator = (req, res, next) => {
   const valid = validate_schema.login_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -24,7 +24,7 @@ function login_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function register_validator(req, res, next) {
+const register_validator = (req, res, next) => {
   const valid = validate_schema.registration_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -40,7 +40,7 @@ function register_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function new_admin_validator(req, res, next) {
+const new_admin_validator = (req, res, next) => {
   const valid = validate_schema.new_admin_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -56,7 +56,7 @@ function new_admin_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function new_book_validator(req, res, next) {
+const new_book_validator = (req, res, next) => {
   const valid = validate_schema.new_book_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -72,7 +72,7 @@ function new_book_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function book_update_validator(req, res, next) {
+const book_update_validator = (req, res, next) => {
   const valid = validate_schema.book_update_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -88,7 +88,7 @@ function book_update_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function book_id_array_validator(req, res, next) {
+const book_id_array_validator = (req, res, next) => {
   const valid = validate_schema.book_id_array_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);

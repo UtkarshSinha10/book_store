@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.93% </span>
+                <span class="strong">72.41% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>41/57</span>
+                <span class='fraction'>42/58</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.93% </span>
+                <span class="strong">72.41% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>41/57</span>
+                <span class='fraction'>42/58</span>
             </div>
         
             
@@ -252,7 +252,21 @@
 <a name='L193'></a><a href='#L193'>193</a>
 <a name='L194'></a><a href='#L194'>194</a>
 <a name='L195'></a><a href='#L195'>195</a>
-<a name='L196'></a><a href='#L196'>196</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -445,6 +459,20 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* eslint-disable max-len */
@@ -458,7 +486,7 @@ const {Database_operation_error} = require('../../errors/errors');
  * @return {Object} Book document.
  * @throws Database_operation_error
  */
-exports.find_a_book_by_name = async (name) =&gt; {
+const find_a_book_by_name = async (name) =&gt; {
   try {
     const found_book = await Book.findOne({name: name});
     return found_book;
@@ -474,7 +502,7 @@ exports.find_a_book_by_name = async (name) =&gt; {
  * @return {*} Book document.
  * @throws Database_operation_error
  */
-exports.find_a_book_by_id = async (id) =&gt; {
+const find_a_book_by_id = async (id) =&gt; {
   try {
     const found_book = await Book.findOne({_id: id});
     return found_book;
@@ -490,7 +518,7 @@ exports.find_a_book_by_id = async (id) =&gt; {
  * @throws Database_operation_error.
  * @return {*} Mongoose update object.
  */
-exports.remove_book = async (id) =&gt; {
+const remove_book = async (id) =&gt; {
   try {
     const found_books = await Book.updateMany({_id: {'$in': id}}, {is_discarded: true});
     return found_books;
@@ -506,7 +534,7 @@ exports.remove_book = async (id) =&gt; {
  * @throws Database_operation_error
  * @return {*} Mongoose inserted object.
  */
-exports.create_new_book = <span class="fstat-no" title="function not covered" >as</span>ync (new_book) =&gt; {
+const create_new_book = <span class="fstat-no" title="function not covered" >as</span>ync (new_book) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const new_book_entry = <span class="cstat-no" title="statement not covered" >await Book.collection.insertOne(new_book);</span>
 <span class="cstat-no" title="statement not covered" >    return new_book_entry;</span>
@@ -523,7 +551,7 @@ exports.create_new_book = <span class="fstat-no" title="function not covered" >a
  * @return {*} Mongoose update object.
  * @throws Database_operation_error.
  */
-exports.update_book= async (id, updated_body) =&gt; {
+const update_book = async (id, updated_body) =&gt; {
   try {
     // eslint-disable-next-line new-cap
     const updated_book = await Book.findByIdAndUpdate({_id: id}, updated_body).select('name id');
@@ -539,7 +567,7 @@ exports.update_book= async (id, updated_body) =&gt; {
  * @return {*} Total books present in database.
  * @throws Database_operation_error
  */
-exports.count_total_books = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
+const count_total_books = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const total_books = <span class="cstat-no" title="statement not covered" >await Book.aggregate({</span>
       $group: {
@@ -563,7 +591,7 @@ exports.count_total_books = <span class="fstat-no" title="function not covered" 
  * @return {*} Books of particular genre.
  * @throws Database_operation_error.
  */
-exports.books_by_genre = async (genre, skip, limit) =&gt; {
+const books_by_genre = async (genre, skip, limit) =&gt; {
   try {
     const books_by_genre = await Book.find({genre: genre}).select('id name price published author').skip(skip).limit(limit);
     return books_by_genre;
@@ -580,7 +608,7 @@ exports.books_by_genre = async (genre, skip, limit) =&gt; {
  * @return {*} Books in database.
  * @throws Database_operation_error.
  */
-exports.books_registered_in_store = async (skip, limit) =&gt; {
+const books_registered_in_store = async (skip, limit) =&gt; {
   try {
     const books_registered_in_store = await Book.find().select('id name copies').skip(skip).limit(limit);
     return books_registered_in_store;
@@ -598,7 +626,7 @@ exports.books_registered_in_store = async (skip, limit) =&gt; {
  * @return {*} Books by particular author.
  * @throws Database_operation_error.
  */
-exports.books_by_author = async (author, skip, limit) =&gt; {
+const books_by_author = async (author, skip, limit) =&gt; {
   try {
     const books_by_author = await Book.find({author: author}).select('id name price published').skip(skip).limit(limit);
     return books_by_author;
@@ -616,7 +644,7 @@ exports.books_by_author = async (author, skip, limit) =&gt; {
  * @return {*} Books by auhtor's name match.
  * @throws Database_operation_error.
  */
-exports.books_by_author_match= async (author, skip, limit) =&gt; {
+const books_by_author_match = async (author, skip, limit) =&gt; {
   try {
     const book_list = await Book.find({'$text': {'$search': author}}).skip(skip).limit(limit);
     return book_list;
@@ -633,7 +661,7 @@ exports.books_by_author_match= async (author, skip, limit) =&gt; {
  * @return {*} Books that can be rented.
  * @throws Database_operation_error.
  */
-exports.book_to_be_rented = async (age, book_id_array) =&gt; {
+const book_to_be_rented = async (age, book_id_array) =&gt; {
   try {
     const book_list = await Book.find({'$and': [{_id: {'$in': book_id_array}}, {is_discarded: false}, {age_rated: {'$gte': age}}]});
 &nbsp;
@@ -642,6 +670,20 @@ exports.book_to_be_rented = async (age, book_id_array) =&gt; {
 <span class="cstat-no" title="statement not covered" >    throw new Database_operation_error('Database operation failed');</span>
   }
 };
+&nbsp;
+module.exports = {
+  find_a_book_by_name,
+  find_a_book_by_id,
+  remove_book,
+  create_new_book,
+  update_book,
+  count_total_books,
+  books_by_genre,
+  books_registered_in_store,
+  books_by_author,
+  books_by_author_match,
+  book_to_be_rented,
+};
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -649,7 +691,7 @@ exports.book_to_be_rented = async (age, book_id_array) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Mar 09 2021 17:39:42 GMT+0530 (India Standard Time)
+                at Wed Mar 10 2021 12:02:16 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>

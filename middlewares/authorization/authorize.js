@@ -10,14 +10,14 @@ const {response} = require('../../response/response');
  * @param {*} next The next.
  * @return {*} Return to response.js
  */
-function authorization( req, res, next ) {
+const authorization = (req, res, next) => {
   try {
     if (!req.headers || !req.headers.authorization) {
       throw new Authentication_error('No Authentication Key');
     }
     const token = req.headers.authorization.split(' ')[1];
     const verified = JWT.verify(token, process.env.mysecretkey);
-    if ( verified ) {
+    if (verified) {
       next();
     } else {
       throw new Authentication_error('Unauthorized Key');
@@ -33,4 +33,6 @@ function authorization( req, res, next ) {
   }
 };
 
-module.exports.authorization = authorization;
+module.exports = {
+  authorization,
+};

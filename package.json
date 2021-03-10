@@ -1,8 +1,8 @@
 {
-  "name": "assignment",
+  "name": "book_store",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend project for book store",
+  "main": "server.js",
   "scripts": {
     "test": "jest --testEnvironment=node --verbose --forceExit --watchAll --maxWorkers=1",
     "start": "nodemon server.js"

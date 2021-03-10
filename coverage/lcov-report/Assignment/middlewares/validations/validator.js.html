@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.3% </span>
+                <span class="strong">96.97% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>26/27</span>
+                <span class='fraction'>32/33</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.3% </span>
+                <span class="strong">96.97% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>26/27</span>
+                <span class='fraction'>32/33</span>
             </div>
         
             
@@ -174,7 +174,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -190,7 +190,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -206,7 +206,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -222,7 +222,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -238,7 +238,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -254,7 +254,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -281,7 +281,7 @@ const {response} = require('../../response/response');
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function login_validator(req, res, next) {
+const login_validator = (req, res, next) =&gt; {
   const valid = validate_schema.login_schema.validate(req.body);
   <span class="missing-if-branch" title="if path not taken" >I</span>if (valid.error) {
 <span class="cstat-no" title="statement not covered" >    return response(valid.error, null, 'Validation Failed', res);</span>
@@ -297,7 +297,7 @@ function login_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function register_validator(req, res, next) {
+const register_validator = (req, res, next) =&gt; {
   const valid = validate_schema.registration_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -313,7 +313,7 @@ function register_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function new_admin_validator(req, res, next) {
+const new_admin_validator = (req, res, next) =&gt; {
   const valid = validate_schema.new_admin_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -329,7 +329,7 @@ function new_admin_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function new_book_validator(req, res, next) {
+const new_book_validator = (req, res, next) =&gt; {
   const valid = validate_schema.new_book_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -345,7 +345,7 @@ function new_book_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function book_update_validator(req, res, next) {
+const book_update_validator = (req, res, next) =&gt; {
   const valid = validate_schema.book_update_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -361,7 +361,7 @@ function book_update_validator(req, res, next) {
  * @param {*} next The next()
  * @return {*} Error response or call next().
  */
-function book_id_array_validator(req, res, next) {
+const book_id_array_validator = (req, res, next) =&gt; {
   const valid = validate_schema.book_id_array_schema.validate(req.body);
   if (valid.error) {
     return response(valid.error, null, 'Validation Failed', res);
@@ -385,7 +385,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Mar 09 2021 17:39:42 GMT+0530 (India Standard Time)
+                at Wed Mar 10 2021 12:02:16 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>
