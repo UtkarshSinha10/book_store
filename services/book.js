@@ -3,6 +3,7 @@ const history_query = require('../models/model_query/history_query');
 const dateFormat = require('dateformat');
 const {payload_generator} = require('../helper/payload_generator');
 const {response} = require('../response/response');
+// const {elasticClient} = require('../elasticsearch/elasticconnection');
 const {
   Not_found_error,
   Duplication_error,
@@ -23,7 +24,6 @@ const new_book = async (req, res) => {
   try {
     const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
-
     if (user_is_admin) {
       const new_book = req.body;
       new_book.is_discarded = false;
@@ -31,20 +31,57 @@ const new_book = async (req, res) => {
           dateFormat(new Date(new_book.published), 'yyyy-mm-dd'),
       );
       const found_book = await book_query.find_a_book_by_name(new_book.name);
-
       if (found_book) {
         throw new Duplication_error('Book already exists');
       }
       const book = await book_query.create_new_book(new_book);
+
+      // new_book.id = req.body._id;
+      // delete new_book._id;
+      // elasticClient.index({
+      //   'index': 'books',
+      //   'body': new_book,
+      // })
+      //     .then((resp)=>{
+      //       console.log(resp);
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     });
       return response(null, book.ops[0], 'Book added', res);
     } else {
-      throw new Access_denial_error('Forbideden: Access is denies');
+      throw new Access_denial_error('Forbideden: Access is denied');
     }
   } catch (err) {
+    console.log(err);
     return response(err, null, err.message, res);
   }
 };
-
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+const books_by_descriptors = async (req, res) => {
+  // const keywords = req.query.keywords;
+  // if (keywords) {
+  //   const query_body = {
+  //     index: 'books',
+  //     q: `*${keywords}*`,
+  //   };
+  //   elasticClient.search(query_body)
+  //       .then((response_body) => {
+  //         return response(
+  //             null, response_body,
+  //             'Books retrieval on keywords',
+  //             res,
+  //         );
+  //       })
+  //       .catch((err) => {
+  //         console.log('hiii');
+  //       });
+  // }
+};
 /**
  * Updating book function.
  * @async
@@ -279,6 +316,7 @@ const book_by_earliest_date = async (req, res) => {
   }
 };
 
+
 module.exports = {
   new_book,
   update_book,
@@ -288,4 +326,5 @@ module.exports = {
   remove_books,
   books_by_author_match,
   book_by_earliest_date,
+  books_by_descriptors,
 };

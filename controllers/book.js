@@ -32,6 +32,10 @@ const book_by_earliest_date = (req, res, next) => {
   book_service.book_by_earliest_date(req, res);
 };
 
+const books_by_descriptors = (req, res, next) => {
+  book_service.books_by_descriptors(req, res);
+};
+
 module.exports = {
   new_book,
   update_book,
@@ -41,4 +45,5 @@ module.exports = {
   remove_books,
   book_by_author_match,
   book_by_earliest_date,
+  books_by_descriptors,
 };

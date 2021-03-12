@@ -63,4 +63,10 @@ routes.get('/date', authorize.authorization, book_controller.book_by_earliest_da
  */
 routes.get('/currentbook', authorize.authorization, book_controller.current_books);
 
+// API additional for elasticsearch
+/**
+ * Get books using descriptors/keywords related to book
+ * GET Request
+ */
+routes.get('/describe', authorize.authorization, book_controller.books_by_descriptors);
 module.exports = routes;

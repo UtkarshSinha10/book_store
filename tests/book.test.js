@@ -196,23 +196,24 @@ describe('Get books by genre', () => {
 });
 
 describe('Post new book', () => {
-  // it('200 on successful creation', () => {
-  //   return request.post('/book/new')
-  //       .set('Authorization', `Bearer ${token}`)
-  //       .send({
-  //         'name': 'Titans in war',
-  //         'price': 2500,
-  //         'published': '1997-01-01',
-  //         'pages': 509,
-  //         'author': 'Stanely Morgan',
-  //         'genre': 'Action',
-  //         'age_rated': 12,
-  //         'copies': 17,
-  //       })
-  //       .then((response) => {
-  //         expect(response.statusCode).toBe(200);
-  //       });
-  // });
+  it('200 on successful creation', () => {
+    return request.post('/book/new')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          'name': 'Tins in war 3'+ Math.random(),
+          'price': 2500,
+          'published': '1997-01-01',
+          'pages': 509,
+          'author': 'Stanely Morgan',
+          'genre': 'Action',
+          'age_rated': 12,
+          'copies': 17,
+          'description': 'Real heros take sword to save the world',
+        })
+        .then((response) => {
+          expect(response.statusCode).toBe(200);
+        });
+  });
   it('500 on validation error', () => {
     return request.post('/book/new')
         .set('Authorization', `Bearer ${token}`)

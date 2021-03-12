@@ -34,6 +34,7 @@ const new_book_schema = Joi.object().keys({
   genre: Joi.string().min(3).max(30).required(),
   age_rated: Joi.number().min(0).required(),
   copies: Joi.number().min(1).required(),
+  description: Joi.string().required(),
 
 });
 // used

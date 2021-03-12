@@ -1,6 +1,27 @@
 const Book = require('../model_schema/book');
 const {Database_operation_error} = require('../../errors/errors');
 
+Book.createMapping(function(err, mapping) {
+  if (err) {
+    console.log('Error creating mapping', err);
+  } else {
+    console.log('Mapping created', mapping);
+  }
+});
+
+const stream = Book.synchronize();
+let count = 0;
+
+stream.on('data', function() {
+  count++;
+});
+stream.on('close', function() {
+  console.log('Indexed '+ count + ' documents');
+});
+stream.on('error', function(err) {
+  console.log(err);
+});
+
 /**
  * Find book by book name.
  * @async
