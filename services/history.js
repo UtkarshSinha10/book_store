@@ -3,7 +3,6 @@ const user_query = require('../models/model_query/user_query');
 const book_query = require('../models/model_query/book_query');
 const dateFormat = require('dateformat');
 const {payload_generator} = require('../helper/payload_generator');
-const {response} = require('../response/response');
 const {
   Not_found_error,
   Access_denial_error,
@@ -22,8 +21,6 @@ const rent_books = async (req, res) => {
   try {
     const book_array = req.body.book;
     const payload = payload_generator(req);
-    // const token = req.headers.authorization.split(' ')[1];
-    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -49,7 +46,7 @@ const rent_books = async (req, res) => {
       const rent_books_array = [];
       const not_rented_books_array = [];
       if (avaiable_books_to_be_rented.length === 0) {
-        return response(null, [], 'Books are not availabe', res);
+        return null;
       }
       let i = 0;
       for (;
@@ -78,10 +75,10 @@ const rent_books = async (req, res) => {
         rented_books: rent_books,
         not_rented_books: not_rented_books_array,
       };
-      return response(null, rent_response, 'Rental information', res);
+      return rent_response;
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -97,8 +94,6 @@ const return_books = async (req, res) => {
   try {
     const book_array = req.body.book;
     const payload = payload_generator(req);
-    // const token = req.headers.authorization.split(' ')[1];
-    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -107,10 +102,10 @@ const return_books = async (req, res) => {
     } else {
       const new_book_array = book_array.map((book) => book.book_id);
       const return_books = await history_query.return_books(id, new_book_array);
-      return response(null, return_books, 'Books returned', res);
+      return return_books;
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -127,8 +122,6 @@ const amount_spent = async (req, res) => {
   try {
     const email = req.body.email;
     const payload = payload_generator(req);
-    // const token = req.headers.authorization.split(' ')[1];
-    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const is_admin = payload.user_is_admin;
     if ((is_admin) || (email === user_email)) {
@@ -140,17 +133,15 @@ const amount_spent = async (req, res) => {
       const last_date = today.setDate(today.getDate() - 100);
       const amount = await history_query.amount_spent(user._id, last_date);
       if (amount.length === 0) {
-        return response(null, 0, 'No amount spentin last 100 days', res);
+        return null;
       }
       const user_spent = amount[0].total;
-
-      return response(null, user_spent, 'Amount spent in last 100 days', res);
+      return user_spent;
     } else {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    // console.log(err);
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -164,9 +155,9 @@ const amount_spent = async (req, res) => {
 const rented_books = async (req, res) => {
   try {
     const rented_books = await history_query.find_all_rented_books();
-    return response(null, rented_books, 'Rented books id and its copies', res);
+    return rented_books;
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -182,8 +173,6 @@ const rented_books = async (req, res) => {
 const rented_books_to_user = async (req, res) => {
   try {
     const payload = payload_generator(req);
-    // const token = req.headers.authorization.split(' ')[1];
-    // const payload = jwt.verify(token, process.env.mysecretkey);
     const user_email = payload.user_email;
     const user_is_admin = payload.user_is_admin;
     const email = req.body.email;
@@ -194,16 +183,12 @@ const rented_books_to_user = async (req, res) => {
       }
       const id = user._id;
       const rented_books_to_user = await history_query.rented_books_to_user(id);
-      if (rented_books_to_user.length) {
-        return response(null, rented_books_to_user, 'Books to user', res);
-      } else {
-        return response(null, [], 'No rented books to user found', res);
-      }
+      return rented_books_to_user;
     } else {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 

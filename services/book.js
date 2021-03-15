@@ -35,20 +35,7 @@ const new_book = async (req, res) => {
         throw new Duplication_error('Book already exists');
       }
       const book = await book_query.create_new_book(new_book);
-
-      // new_book.id = req.body._id;
-      // delete new_book._id;
-      // elasticClient.index({
-      //   'index': 'books',
-      //   'body': new_book,
-      // })
-      //     .then((resp)=>{
-      //       console.log(resp);
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
-      return response(null, book.ops[0], 'Book added', res);
+      return book;
     } else {
       throw new Access_denial_error('Forbideden: Access is denied');
     }
@@ -114,14 +101,13 @@ const update_book = async (req, res) => {
         }
         const update_book = await
         book_query.update_book(req.body.book_id, new_book);
-
-        return response(null, update_book, 'Updation successful', res);
+        return update_book;
       }
     } else {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -162,9 +148,9 @@ const current_books = async (req, res) => {
         });
       }
     }
-    return response(null, books_array, 'Books present details', res);
+    return books_array;
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -181,13 +167,9 @@ const books_by_genre = async (req, res) => {
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_genre(genre, skip, limit);
-    if (book_list) {
-      return response(null, book_list, 'Search by genre successful', res);
-    } else {
-      return response(null, [], 'No books in given genre', res);
-    }
+    return book_list;
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -204,13 +186,9 @@ const books_by_author = async (req, res) => {
     const skip = req.query.skip;
     const limit = req.query.limit;
     const book_list = await book_query.books_by_author(author, skip, limit);
-    if (book_list.length > 0) {
-      return response(null, book_list, 'Search by author successful', res);
-    } else {
-      return response(null, [], 'No books by given author', res);
-    }
+    return book_list;
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -231,13 +209,12 @@ const remove_books = async (req, res) => {
       const new_book_array = book_array.map((book) => book.book_id);
       const book_modification_details = await
       book_query.remove_book(new_book_array);
-
-      return response(null, book_modification_details, 'Books removed', res);
+      return book_modification_details;
     } else {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -256,13 +233,9 @@ const books_by_author_match = async (req, res) => {
     const book_list = await
     book_query.books_by_author_match(author, skip, limit);
 
-    if (book_list.length > 0) {
-      return response(null, book_list, 'Books by matching author\'s name', res);
-    } else {
-      return response(null, [], 'No books with matching author\'s name', res);
-    }
+    return book_list;
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -291,28 +264,19 @@ const book_by_earliest_date = async (req, res) => {
                 new Date(rent_date.setDate(rent_date.getDate() + 14)),
                 'yyyy-mm-dd',
             );
-
-            return response(
-                null,
-                available_date,
-                'Book will be earrliest avialble on given date',
-                res);
+            return available_date;
           }
         } else {
-          return response(
-              null,
-              dateFormat(new Date()),
-              'Books available to issue',
-              res);
+          return dateFormat(new Date(), 'yyyy-mm-dd');
         }
       } else {
-        return response(null, [], 'Book removed from the store', res);
+        return null;
       }
     } else {
       throw new Not_found_error('Book not found');
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 

@@ -3,7 +3,6 @@ const dateFormat = require('dateformat');
 const {payload_generator} = require('../helper/payload_generator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const {response} = require('../response/response');
 const {
   Not_found_error,
   Credential_error,
@@ -36,12 +35,12 @@ const login = async (req, res) => {
         user_email: user.email,
         user_is_admin: user.is_admin,
       }, process.env.mysecretkey, {expiresIn: '10h'});
-      return response(null, token, 'Logged In', res);
+      return token;
     } else {
       throw new Credential_error('Wrong Credentials');
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -74,10 +73,10 @@ const register = async (req, res) => {
     }, process.env.mysecretkey, {expiresIn: '1h'});
 
     if (registered) {
-      return response(null, token, 'User registration completed', res);
+      return token;
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -101,7 +100,7 @@ const new_admin = async (req, res) => {
     if (user_is_admin) {
       const admin = await user_query.update_is_admin(req.body.email);
       if (admin) {
-        return response(null, admin, 'Admin privileges granted', res);
+        return admin;
       } else {
         throw new Not_found_error('User not found');
       }
@@ -109,7 +108,7 @@ const new_admin = async (req, res) => {
       throw new Access_denial_error('Forbidden: Access is denied');
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
@@ -125,13 +124,9 @@ const get_all_users = async (req, res) => {
     const skip = Number(req.query.skip);
     const limit = Number(req.query.limit);
     const users = await user_query.find_all_users(skip, limit);
-    if (users) {
-      return response(null, users, 'Registered users', res);
-    } else {
-      return response(null, [], 'No user registered', res);
-    }
+    return users;
   } catch (err) {
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
 
