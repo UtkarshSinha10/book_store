@@ -93,7 +93,6 @@ const count_books_rented_by_book_id = async (id) => {
 const amount_spent = async (id, last_date) => {
   try {
     const date = new Date(new Date(null).setSeconds(last_date/1000));
-    // eslint-disable-next-line new-cap
     const amount = await History.aggregate(
         [
           {'$match':

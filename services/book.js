@@ -47,26 +47,26 @@ const new_book = async (body, payload) => {
  * @param {*} req
  * @param {*} res
  */
-const books_by_descriptors = async (req, res) => {
-  // const keywords = req.query.keywords;
-  // if (keywords) {
-  //   const query_body = {
-  //     index: 'books',
-  //     q: `*${keywords}*`,
-  //   };
-  //   elasticClient.search(query_body)
-  //       .then((response_body) => {
-  //         return response(
-  //             null, response_body,
-  //             'Books retrieval on keywords',
-  //             res,
-  //         );
-  //       })
-  //       .catch((err) => {
-  //         console.log('hiii');
-  //       });
-  // }
-};
+// const books_by_descriptors = async (req, res) => {
+// const keywords = req.query.keywords;
+// if (keywords) {
+//   const query_body = {
+//     index: 'books',
+//     q: `*${keywords}*`,
+//   };
+//   elasticClient.search(query_body)
+//       .then((response_body) => {
+//         return response(
+//             null, response_body,
+//             'Books retrieval on keywords',
+//             res,
+//         );
+//       })
+//       .catch((err) => {
+//         console.log('hiii');
+//       });
+// }
+// };
 /**
  * Updating book function.
  * @async
@@ -274,5 +274,5 @@ module.exports = {
   remove_books,
   books_by_author_match,
   book_by_earliest_date,
-  books_by_descriptors,
+  // books_by_descriptors,
 };

@@ -116,9 +116,9 @@ const book_by_earliest_date = async (req, res, next) => {
   }
 };
 
-const books_by_descriptors = (req, res, next) => {
-  book_service.books_by_descriptors(req, res);
-};
+// const books_by_descriptors = (req, res, next) => {
+//   book_service.books_by_descriptors(req, res);
+// };
 
 module.exports = {
   new_book,
@@ -129,5 +129,5 @@ module.exports = {
   remove_books,
   book_by_author_match,
   book_by_earliest_date,
-  books_by_descriptors,
+  // books_by_descriptors,
 };
