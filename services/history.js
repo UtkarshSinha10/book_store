@@ -1,8 +1,8 @@
+/* eslint-disable valid-jsdoc */
 const history_query = require('../models/model_query/history_query');
 const user_query = require('../models/model_query/user_query');
 const book_query = require('../models/model_query/book_query');
 const dateFormat = require('dateformat');
-const {payload_generator} = require('../helper/payload_generator');
 const {
   Not_found_error,
   Access_denial_error,
@@ -17,10 +17,8 @@ const {
  * @return {*} Sends Response body to response function.
  * @throws Limit_exceeded_error
  */
-const rent_books = async (req, res) => {
+const rent_books = async (book_array, payload) => {
   try {
-    const book_array = req.body.book;
-    const payload = payload_generator(req);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -90,10 +88,8 @@ const rent_books = async (req, res) => {
  * @return {*} Sends Response body to response function.
  * @throws Not_found_error.
  */
-const return_books = async (req, res) => {
+const return_books = async (book_array, payload) => {
   try {
-    const book_array = req.body.book;
-    const payload = payload_generator(req);
     const user_email = payload.user_email;
     const user = await user_query.find_user(user_email);
     const id = user._id;
@@ -118,10 +114,8 @@ const return_books = async (req, res) => {
  * @throws Not_found_error.
  * @throws Access_denial_error.
  */
-const amount_spent = async (req, res) => {
+const amount_spent = async (email, payload) => {
   try {
-    const email = req.body.email;
-    const payload = payload_generator(req);
     const user_email = payload.user_email;
     const is_admin = payload.user_is_admin;
     if ((is_admin) || (email === user_email)) {
@@ -152,7 +146,7 @@ const amount_spent = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-const rented_books = async (req, res) => {
+const rented_books = async () => {
   try {
     const rented_books = await history_query.find_all_rented_books();
     return rented_books;
@@ -170,14 +164,12 @@ const rented_books = async (req, res) => {
  * @throws Not_found_error.
  * @throws Access_denial_error.
  */
-const rented_books_to_user = async (req, res) => {
+const rented_books_to_user = async (email, payload) => {
   try {
-    const payload = payload_generator(req);
     const user_email = payload.user_email;
     const user_is_admin = payload.user_is_admin;
-    const email = req.body.email;
     if ((user_is_admin) || (email === user_email)) {
-      const user = await user_query.find_user(req.body.email);
+      const user = await user_query.find_user(email);
       if (!user) {
         throw new Not_found_error('User not found');
       }

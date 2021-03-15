@@ -1,9 +1,11 @@
 const book_service = require('../services/book');
 const {response} = require('../response/response');
+const {payload_generator} = require('../helper/payload_generator');
 
 const new_book = async (req, res, next) => {
   try {
-    const book = await book_service.new_book(req, res);
+    const payload = payload_generator(req);
+    const book = await book_service.new_book(req.body, payload);
     response(null, book.ops, 'Book added', res);
   } catch (err) {
     return response(err, null, err.message, res);
@@ -12,7 +14,8 @@ const new_book = async (req, res, next) => {
 
 const update_book = async (req, res, next) => {
   try {
-    const update_book = await book_service.update_book(req, res);
+    const payload = payload_generator(req);
+    const update_book = await book_service.update_book(req.body, payload);
     return response(null, update_book, 'Updation successful', res);
   } catch (err) {
     return response(err, null, err.message, res);
@@ -21,7 +24,9 @@ const update_book = async (req, res, next) => {
 
 const current_books = async (req, res, next) => {
   try {
-    const books_array = await book_service.current_books(req, res);
+    const skip = req.query.skip;
+    const limit = req.query.limit;
+    const books_array = await book_service.current_books(skip, limit);
     response(null, books_array, 'Books present details', res);
   } catch (err) {
     return response(err, null, err.message, res);
@@ -30,7 +35,10 @@ const current_books = async (req, res, next) => {
 
 const book_by_genre = async (req, res, next) => {
   try {
-    const book_list = await book_service.books_by_genre(req, res);
+    const genre = req.query.genre;
+    const skip = Number(req.query.skip);
+    const limit = Number(req.query.limit);
+    const book_list = await book_service.books_by_genre(genre, skip, limit);
     if (book_list) {
       return response(null, book_list, 'Search by genre successful', res);
     } else {
@@ -43,7 +51,10 @@ const book_by_genre = async (req, res, next) => {
 
 const book_by_author = async (req, res, next) => {
   try {
-    const book_list = await book_service.books_by_author(req, res);
+    const author = req.query.author;
+    const skip = req.query.skip;
+    const limit = req.query.limit;
+    const book_list = await book_service.books_by_author(author, skip, limit);
     if (book_list.length > 0) {
       return response(null, book_list, 'Search by author successful', res);
     } else {
@@ -56,7 +67,11 @@ const book_by_author = async (req, res, next) => {
 
 const remove_books = async (req, res, next) => {
   try {
-    const book_modification_details = await book_service.remove_books(req, res);
+    const payload = payload_generator(req);
+    const book_modification_details = await book_service.remove_books(
+        req.body,
+        payload,
+    );
     return response(null, book_modification_details, 'Books removed', res);
   } catch (err) {
     return response(err, null, err.message, res);
@@ -65,7 +80,14 @@ const remove_books = async (req, res, next) => {
 
 const book_by_author_match = async (req, res, next) => {
   try {
-    const book_list = await book_service.books_by_author_match(req, res);
+    const author = req.query.author;
+    const skip = Number(req.query.skip);
+    const limit = Number(req.query.limit);
+    const book_list = await book_service.books_by_author_match(
+        author,
+        skip,
+        limit,
+    );
     if (book_list.length > 0) {
       return response(null, book_list, 'Books by matching author\'s name', res);
     } else {
@@ -78,12 +100,13 @@ const book_by_author_match = async (req, res, next) => {
 
 const book_by_earliest_date = async (req, res, next) => {
   try {
-    const available_date = await book_service.book_by_earliest_date(req, res);
+    const book_id = req.query.book_id;
+    const available_date = await book_service.book_by_earliest_date(book_id);
     if (available_date) {
       return response(
           null,
           available_date,
-          'Book will be earliest avialble on given date',
+          'Book will be avialble on given date',
           res);
     } else {
       return response(null, [], 'Book not  store', res);

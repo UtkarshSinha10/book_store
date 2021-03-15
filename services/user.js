@@ -1,6 +1,6 @@
+/* eslint-disable valid-jsdoc */
 const user_query = require('../models/model_query/user_query');
 const dateFormat = require('dateformat');
-const {payload_generator} = require('../helper/payload_generator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {
@@ -19,14 +19,14 @@ const {
  * @throws Credential_error
  * @throws Not_found_error
  */
-const login = async (req, res) => {
+const login = async (email, password) => {
   try {
-    const user = await user_query.find_user(req.body.email);
+    const user = await user_query.find_user(email);
     if (!user) {
       throw new Not_found_error('User not found');
     }
     const password_matching = await bcrypt.compare(
-        req.body.password,
+        password,
         user.password,
     );
 
@@ -52,15 +52,14 @@ const login = async (req, res) => {
  * @return {*} Sends Response body to response function.
  * @throws Duplication_error
  */
-const register = async (req, res) => {
+const register = async (new_user) => {
   try {
-    const user = await user_query.find_user(req.body.email);
+    const user = await user_query.find_user(new_user.email);
     if (user) {
       throw new Duplication_error('User already exists');
     }
 
-    const hash_password = await bcrypt.hash(req.body.password, 10);
-    const new_user = req.body;
+    const hash_password = await bcrypt.hash(new_user.password, 10);
     new_user.password = hash_password;
     new_user.is_admin = false;
     new_user.is_active = true;
@@ -89,16 +88,15 @@ const register = async (req, res) => {
  * @throws Not_found_error
  * @throws Access_denial_error
  */
-const new_admin = async (req, res) => {
+const new_admin = async (email, payload) => {
   try {
-    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
-    const user = await user_query.find_user(req.body.email);
+    const user = await user_query.find_user(email);
     if (!user) {
       throw new Not_found_error('User not found');
     }
     if (user_is_admin) {
-      const admin = await user_query.update_is_admin(req.body.email);
+      const admin = await user_query.update_is_admin(email);
       if (admin) {
         return admin;
       } else {
@@ -119,12 +117,14 @@ const new_admin = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-const get_all_users = async (req, res) => {
+const get_all_users = async (skip, limit, payload) => {
   try {
-    const skip = Number(req.query.skip);
-    const limit = Number(req.query.limit);
-    const users = await user_query.find_all_users(skip, limit);
-    return users;
+    if (payload.user_is_admin) {
+      const users = await user_query.find_all_users(skip, limit);
+      return users;
+    } else {
+      throw Access_denial_error;
+    }
   } catch (err) {
     throw err;
   }

@@ -1,9 +1,8 @@
+/* eslint-disable valid-jsdoc */
 const book_query = require('../models/model_query/book_query');
 const history_query = require('../models/model_query/history_query');
 const dateFormat = require('dateformat');
-const {payload_generator} = require('../helper/payload_generator');
-const {response} = require('../response/response');
-// const {elasticClient} = require('../elasticsearch/elasticconnection');
+
 const {
   Not_found_error,
   Duplication_error,
@@ -13,19 +12,18 @@ const {
 /**
  * Registering new book function.
  * @async
- * @param {*} req The HTTP request.
- * @param {*} res The HTTP response.
+ * @param {*} body The HTTP request.
+ * @param {*} payload The HTTP response.
  * @return {*} Sends Response body to response function.
  * @throws Duplication_error
  * @throws Database_operation_error
  * @throws Access_denial_error
  */
-const new_book = async (req, res) => {
+const new_book = async (body, payload) => {
   try {
-    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
     if (user_is_admin) {
-      const new_book = req.body;
+      const new_book = body;
       new_book.is_discarded = false;
       new_book.published = new Date(
           dateFormat(new Date(new_book.published), 'yyyy-mm-dd'),
@@ -40,10 +38,10 @@ const new_book = async (req, res) => {
       throw new Access_denial_error('Forbideden: Access is denied');
     }
   } catch (err) {
-    console.log(err);
-    return response(err, null, err.message, res);
+    throw err;
   }
 };
+
 /**
  *
  * @param {*} req
@@ -79,28 +77,27 @@ const books_by_descriptors = async (req, res) => {
  * @throws Database_operation_error
  * @throws Access_denial_error
  */
-const update_book = async (req, res) => {
+const update_book = async (body, payload) => {
   try {
-    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
 
     if (user_is_admin) {
-      const found_book = await book_query.find_a_book_by_id(req.body.book_id);
+      const found_book = await book_query.find_a_book_by_id(body.book_id);
       if (!found_book) {
         throw new Not_found_error('Book not found');
       } else {
         const new_book = {};
-        if (req.body.copies) {
-          new_book.copies = req.body.copies;
+        if (body.copies) {
+          new_book.copies = body.copies;
         }
-        if (req.body.genre) {
-          new_book.genre = req.body.genre;
+        if (body.genre) {
+          new_book.genre = body.genre;
         }
-        if (req.body.price) {
-          new_book.price = Number(req.body.price);
+        if (body.price) {
+          new_book.price = Number(body.price);
         }
         const update_book = await
-        book_query.update_book(req.body.book_id, new_book);
+        book_query.update_book(body.book_id, new_book);
         return update_book;
       }
     } else {
@@ -118,10 +115,8 @@ const update_book = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-const current_books = async (req, res) => {
+const current_books = async (skip, limit) => {
   try {
-    const skip = req.query.skip;
-    const limit = req.query.limit;
     const books_registered_in_store = await
     book_query.books_registered_in_store(skip, limit);
 
@@ -161,11 +156,8 @@ const current_books = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-const books_by_genre = async (req, res) => {
+const books_by_genre = async (genre, skip, limit) => {
   try {
-    const genre = req.query.genre;
-    const skip = Number(req.query.skip);
-    const limit = Number(req.query.limit);
     const book_list = await book_query.books_by_genre(genre, skip, limit);
     return book_list;
   } catch (err) {
@@ -180,11 +172,8 @@ const books_by_genre = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-const books_by_author = async (req, res) => {
+const books_by_author = async (author, skip, limit) => {
   try {
-    const author = req.query.author;
-    const skip = req.query.skip;
-    const limit = req.query.limit;
     const book_list = await book_query.books_by_author(author, skip, limit);
     return book_list;
   } catch (err) {
@@ -200,12 +189,11 @@ const books_by_author = async (req, res) => {
  * @return {*} Sends Response body to response function.
  * @throws Access_denial_error
  */
-const remove_books = async (req, res) => {
+const remove_books = async (body, payload) => {
   try {
-    const payload = payload_generator(req);
     const user_is_admin = payload.user_is_admin;
     if (user_is_admin) {
-      const book_array = req.body.book;
+      const book_array = body.book;
       const new_book_array = book_array.map((book) => book.book_id);
       const book_modification_details = await
       book_query.remove_book(new_book_array);
@@ -225,11 +213,8 @@ const remove_books = async (req, res) => {
  * @param {*} res The HTTP response.
  * @return {*} Sends Response body to response function.
  */
-const books_by_author_match = async (req, res) => {
+const books_by_author_match = async (author, skip, limit) => {
   try {
-    const author = req.query.author;
-    const skip = Number(req.query.skip);
-    const limit = Number(req.query.limit);
     const book_list = await
     book_query.books_by_author_match(author, skip, limit);
 
@@ -248,9 +233,8 @@ const books_by_author_match = async (req, res) => {
  * @throws Duplication_error
  * @throws Not_found_error
  */
-const book_by_earliest_date = async (req, res) => {
+const book_by_earliest_date = async (book_id) => {
   try {
-    const book_id = req.query.book_id;
     const book = await book_query.find_a_book_by_id(book_id);
     if (book) {
       if (!book.is_discarded) {
