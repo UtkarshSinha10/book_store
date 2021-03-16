@@ -15,7 +15,7 @@ const rent_books = async (req, res, next) => {
       return response(null, [], 'Books are not available', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -30,7 +30,7 @@ const amount_spent = async (req, res, next) => {
       return response(null, user_spent, 'Amount spent in last 100 days', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -39,7 +39,7 @@ const rented_books = async (req, res, next) => {
     const rented_books = await history_service.rented_books();
     return response(null, rented_books, 'Rented books id and its copies', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -57,7 +57,7 @@ const rented_books_to_user = async (req, res, next) => {
       return response(null, [], 'No rented books to user found', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -71,7 +71,7 @@ const return_books = async (req, res, next) => {
     );
     return response(null, return_books, 'Books returned', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 

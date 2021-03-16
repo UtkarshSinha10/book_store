@@ -10,7 +10,7 @@ const login = async (req, res, next)=>{
       return response(null, token, 'Logged In', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -22,7 +22,7 @@ const register = async (req, res, next)=>{
       return response(null, token, 'User registration completed', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -33,7 +33,7 @@ const new_admin = async (req, res, next) =>{
     const admin = await user_service.new_admin(email, payload);
     return response(null, admin, 'Admin privileges granted', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -49,7 +49,7 @@ const get_all_users = async (req, res, next) =>{
       return response(null, [], 'No user registered', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 

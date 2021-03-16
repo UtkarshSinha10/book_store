@@ -7,6 +7,7 @@
  */
 const response = (err, result, message, res) => {
   if (err) {
+    console.log(err);
     res.status(err.code).json({
       data: null,
       message: message,

@@ -30,6 +30,11 @@ app.use('/history', history_routes);
 app.all('/*', (req, res) => {
   return response(null, [], 'Wrong Api Hit', res);
 });
-
+/**
+ * Global error handler
+ */
+app.use((err, req, res, next) => {
+  return response(err, null, err.message, res);
+});
 
 module.exports = app;

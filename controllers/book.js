@@ -8,7 +8,7 @@ const new_book = async (req, res, next) => {
     const book = await book_service.new_book(req.body, payload);
     response(null, book.ops, 'Book added', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -18,18 +18,18 @@ const update_book = async (req, res, next) => {
     const update_book = await book_service.update_book(req.body, payload);
     return response(null, update_book, 'Updation successful', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
 const current_books = async (req, res, next) => {
   try {
-    const skip = req.query.skip;
-    const limit = req.query.limit;
+    const skip = Number(req.query.skip);
+    const limit = Number(req.query.limit);
     const books_array = await book_service.current_books(skip, limit);
     response(null, books_array, 'Books present details', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -45,7 +45,7 @@ const book_by_genre = async (req, res, next) => {
       return response(null, [], 'No books in given genre', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -61,7 +61,7 @@ const book_by_author = async (req, res, next) => {
       return response(null, [], 'No books by given author', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -74,7 +74,7 @@ const remove_books = async (req, res, next) => {
     );
     return response(null, book_modification_details, 'Books removed', res);
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -94,7 +94,7 @@ const book_by_author_match = async (req, res, next) => {
       return response(null, [], 'No books with matching author\'s name', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
@@ -112,7 +112,7 @@ const book_by_earliest_date = async (req, res, next) => {
       return response(null, [], 'Book not  store', res);
     }
   } catch (err) {
-    return response(err, null, err.message, res);
+    next(err);
   }
 };
 
