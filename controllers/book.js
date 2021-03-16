@@ -1,6 +1,11 @@
 const book_service = require('../services/book');
 const {response} = require('../response/response');
 const {payload_generator} = require('../helper/payload_generator');
+const redis = require('redis');
+const client = redis.createClient();
+client.on('error', (err)=>{
+  console.log(err);
+});
 
 const new_book = async (req, res, next) => {
   try {
@@ -52,10 +57,36 @@ const book_by_genre = async (req, res, next) => {
 const book_by_author = async (req, res, next) => {
   try {
     const author = req.query.author;
-    const skip = req.query.skip;
-    const limit = req.query.limit;
+    const skip = Number(req.query.skip);
+    const limit = Number(req.query.limit);
     const book_list = await book_service.books_by_author(author, skip, limit);
     if (book_list.length > 0) {
+      const author_in_cache = client.zrank('trending_author', author);
+      if (author_in_cache !== 'nil') {
+        const count = Number(client.zscore('trending_author', author));
+        if (count < 4294967295) {
+          client.zincrby('trending_author', 1, author, (err, strr) =>{
+            console.log(strr);
+            ;
+          });
+        }
+      } else {
+        client.zadd('trending_author', 1, author);
+      }
+      client.zcount('trending_author', 0, 429467295, (err, count) => {
+        console.log(count);
+        if (count > 1) {
+          client.zremrangebyrank('trending_author', 0, 1, (err, num) =>{
+            console.log(num);
+          });
+        }
+      });
+      // if (Number(client.zcount('trending_author', 0, 4294967295)) > 10) {
+      //   client.zremrangebyrank('trending_author', 9, 10);
+      // }
+      client.zrange('trending_author', 0, -1, (err, value)=> {
+        console.log(value);
+      });
       return response(null, book_list, 'Search by author successful', res);
     } else {
       return response(null, [], 'No books by given author', res);
