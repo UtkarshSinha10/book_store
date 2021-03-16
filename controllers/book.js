@@ -67,7 +67,6 @@ const book_by_author = async (req, res, next) => {
         if (count < 4294967295) {
           client.zincrby('trending_author', 1, author, (err, strr) =>{
             console.log(strr);
-            ;
           });
         }
       } else {
@@ -75,7 +74,7 @@ const book_by_author = async (req, res, next) => {
       }
       client.zcount('trending_author', 0, 429467295, (err, count) => {
         console.log(count);
-        if (count > 1) {
+        if (count > 10) {
           client.zremrangebyrank('trending_author', 0, 1, (err, num) =>{
             console.log(num);
           });
@@ -151,6 +150,20 @@ const book_by_earliest_date = async (req, res, next) => {
 //   book_service.books_by_descriptors(req, res);
 // };
 
+const trending_authors = async (req, res, next) => {
+  try {
+    client.zrange('trending_author', 0, -1, (err, value) => {
+      if (err) {
+        throw err;
+      } else {
+        return response(null, value, 'Trending Authors', res);
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   new_book,
   update_book,
@@ -161,4 +174,5 @@ module.exports = {
   book_by_author_match,
   book_by_earliest_date,
   // books_by_descriptors,
+  trending_authors,
 };
