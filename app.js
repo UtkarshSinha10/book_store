@@ -5,11 +5,14 @@ const user_routes = require('./routes/user');
 const book_routes = require('./routes/book');
 const history_routes = require('./routes/history');
 const {response} = require('./response/response');
+// const swaggerJsdoc = require('swagger-jsdoc');
+// const swaggerJsdoc = import('swagger-jsdoc');
+// const swaggerUi = require('swagger-ui-express');
 
 dotenv.config();
 
 const app = express();
-
+// const specs = swaggerJsdoc(options);
 app.use(body_parser.json());
 
 /**

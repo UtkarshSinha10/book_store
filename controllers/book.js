@@ -146,9 +146,19 @@ const book_by_earliest_date = async (req, res, next) => {
   }
 };
 
-// const books_by_descriptors = (req, res, next) => {
-//   book_service.books_by_descriptors(req, res);
-// };
+const books_by_descriptors = async (req, res, next) => {
+  try {
+    const keywords = req.query.keywords;
+    const books = await book_service.books_by_descriptors(keywords);
+    return response(
+        null, books,
+        'Books retrieval on keywords',
+        res,
+    );
+  } catch (err) {
+    next(err);
+  }
+};
 
 const trending_authors = async (req, res, next) => {
   try {
@@ -173,6 +183,6 @@ module.exports = {
   remove_books,
   book_by_author_match,
   book_by_earliest_date,
-  // books_by_descriptors,
+  books_by_descriptors,
   trending_authors,
 };

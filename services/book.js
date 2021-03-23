@@ -2,6 +2,8 @@
 const book_query = require('../models/model_query/book_query');
 const history_query = require('../models/model_query/history_query');
 const dateFormat = require('dateformat');
+const elasticsearch = require('elasticsearch');
+const elasticClient = new elasticsearch.Client({host: 'localhost:9200'});
 
 const {
   Not_found_error,
@@ -47,26 +49,25 @@ const new_book = async (body, payload) => {
  * @param {*} req
  * @param {*} res
  */
-// const books_by_descriptors = async (req, res) => {
-// const keywords = req.query.keywords;
-// if (keywords) {
-//   const query_body = {
-//     index: 'books',
-//     q: `*${keywords}*`,
-//   };
-//   elasticClient.search(query_body)
-//       .then((response_body) => {
-//         return response(
-//             null, response_body,
-//             'Books retrieval on keywords',
-//             res,
-//         );
-//       })
-//       .catch((err) => {
-//         console.log('hiii');
-//       });
-// }
-// };
+const books_by_descriptors = async (keywords) => {
+  try {
+    if (keywords) {
+      const query_body = {
+        index: 'books',
+        q: `*${keywords}*`,
+      };
+      elasticClient.search(query_body)
+          .then((response_body) => {
+            return response_body;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+  } catch (err) {
+    throw err;
+  }
+};
 /**
  * Updating book function.
  * @async
@@ -274,5 +275,5 @@ module.exports = {
   remove_books,
   books_by_author_match,
   book_by_earliest_date,
-  // books_by_descriptors,
+  books_by_descriptors,
 };
