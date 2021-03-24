@@ -7,11 +7,6 @@ const authorize = require('../middlewares/authorization/authorize');
 // eslint-disable-next-line new-cap
 const routes = express.Router();
 
-// API 1
-/**
- * Login route.
- * POST Request.
- */
 routes.post('/login', validator.login_validator, user_controller.login);
 
 // API 2

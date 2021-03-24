@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const body_parser = require('body-parser');
 const dotenv = require('dotenv');
@@ -5,19 +7,14 @@ const user_routes = require('./routes/user');
 const book_routes = require('./routes/book');
 const history_routes = require('./routes/history');
 const {response} = require('./response/response');
-// const swaggerJsdoc = require('swagger-jsdoc');
-// const swaggerJsdoc = import('swagger-jsdoc');
-// const swaggerUi = require('swagger-ui-express');
-
+const cors = require('cors');
 dotenv.config();
 
 const app = express();
-// const specs = swaggerJsdoc(options);
+
+app.use(cors());
 app.use(body_parser.json());
 
-/**
- * User Routes
- */
 app.use('/user', user_routes);
 /**
  * Book Routes

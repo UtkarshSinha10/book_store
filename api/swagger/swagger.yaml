@@ -1,0 +1,92 @@
+swagger: "2.0"
+info:
+  description: "This is a swagger API domcumentation for Book Store APIs."
+  version: "1.0.0"
+  title: "Book Store"
+host: "localhost:3000"
+
+tags:
+- name: "user"
+  description: "Functionalities associated with users"
+- name: "book"
+  description: "Functionalities associated with books"
+- name: "history"
+  description: "Functionalities associated with history"
+
+schemes:
+- "http"
+
+securityDefinitions:  
+  JWT:  
+    type: apiKey  
+    in: header  
+    name: authorization 
+paths:
+  /user/login:
+    post:
+      tags:
+      - "user"
+      summary: "Login an existing user"
+      operationId: "userLogin"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User data for login"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "Login Succesfull"
+        "400":
+          description: "Invalid input"
+        "500":
+          description: "Invalid input"
+  /user/admin:
+    put:
+      tags:
+      - "user"
+      summary: "Granting admin privileges"
+      operationId: "userAdmin"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User email for granting admin privileges"
+        required: true
+        schema:
+          $ref: "#/definitions/Admin"
+      responses:
+        "200":
+          description: "Privileges granted"
+        "400":
+          description: "Invalid input"
+        "500":
+          description: "Invalid input"
+      security:
+        - JWT: [] 
+
+definitions:
+  User:
+    type: "object"
+    properties:
+      email:
+        type: string
+        format: string
+      password:
+        type: string
+        format: string
+  Admin:
+    type: "object"
+    properties:
+      email:
+        type: string
+        format: string
+    

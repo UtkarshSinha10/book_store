@@ -3,15 +3,10 @@ const express = require('express');
 const book_controller = require('../controllers/book');
 const authorize = require('../middlewares/authorization/authorize');
 const validator = require('../middlewares/validations/validator');
-
 // eslint-disable-next-line new-cap
 const routes = express.Router();
 
-// API 3
-/**
- * New book route
- * POST Request
- */
+
 routes.post('/new', authorize.authorization, validator.new_book_validator, book_controller.new_book);
 
 // API 4
@@ -28,11 +23,7 @@ routes.post('/update', authorize.authorization, validator.book_update_validator,
  */
 routes.get('/genre', authorize.authorization, book_controller.book_by_genre);
 
-// API 11
-/**
- * Get books by author route
- * GET Request
- */
+
 routes.get('/author', authorize.authorization, book_controller.book_by_author);
 
 // API 12
