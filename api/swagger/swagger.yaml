@@ -7,11 +7,11 @@ host: "localhost:3000"
 
 tags:
 - name: "user"
-  description: "Functionalities associated with users"
+  description: "APIs associated with users"
 - name: "book"
-  description: "Functionalities associated with books"
+  description: "APIs associated with books"
 - name: "history"
-  description: "Functionalities associated with history"
+  description: "APIs associated with history"
 
 schemes:
 - "http"
@@ -72,7 +72,21 @@ paths:
           description: "Invalid input"
       security:
         - JWT: [] 
-
+  /user/all:
+    get:
+      tags:
+      - "user"
+      summary: "Getting all existing user"
+      operationId: "userAll"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "All the users"
+      security:
+      - JWT: []
 definitions:
   User:
     type: "object"
@@ -82,7 +96,7 @@ definitions:
         format: string
       password:
         type: string
-        format: string
+        format: password
   Admin:
     type: "object"
     properties:
